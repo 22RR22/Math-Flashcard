@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Flashcards - Master Math Formulas!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        h1::before {
+            content: '📐';
+            position: absolute;
+            left: -60px;
+            animation: spin 4s linear infinite;
+        }
+
+        h1::after {
+            content: '📊';
+            position: absolute;
+            right: -60px;
+            animation: spin 4s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            border: 2px solid rgba(255,215,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .grade-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn, .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        .filter-btn.active {
+            background: #ffd700;
+            color: #667eea;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: #fff;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        }
+
+        .stats {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            margin: 0 auto;
+            max-width: 600px;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            animation: slideIn 0.5s ease;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            color: #333;
+            border: 5px solid #ffd700;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #fff;
+            transform: rotateY(180deg);
+            border: 5px solid #fff;
+        }
+
+        .grade-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #667eea;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .card-content {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .card-back .card-content {
+            font-size: 1.5em;
+        }
+
+        .hint {
+            margin-top: 20px;
+            font-size: 0.9em;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(56,239,125,0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 600px;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .mini-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mini-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .mini-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .mini-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .flashcard-container {
+                height: 350px;
+            }
+            
+            .card-content {
+                font-size: 1.3em;
+            }
+            
+            .card-back .card-content {
+                font-size: 1.1em;
+            }
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid #ffd700;
+            border-radius: 25px;
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .search-box input::placeholder {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MATH FLASHCARDS</h1>
+            <p class="subtitle">🎓 Master Every Formula · Grades 6-12 · 731+ Formulas 🎓</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search formulas... (e.g., Pythagorean, quadratic, area)">
+        </div>
+
+        <div class="controls">
+            <div class="grade-filter" id="gradeFilter">
+                <button class="filter-btn active" data-grade="all">All Grades</button>
+                <button class="filter-btn" data-grade="6">Grade 6</button>
+                <button class="filter-btn" data-grade="7">Grade 7</button>
+                <button class="filter-btn" data-grade="8">Grade 8</button>
+                <button class="filter-btn" data-grade="9">Grade 9</button>
+                <button class="filter-btn" data-grade="10">Grade 10</button>
+                <button class="filter-btn" data-grade="11">Grade 11</button>
+                <button class="filter-btn" data-grade="12">Grade 12</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="action-btn" onclick="shuffleCards()">🔀 Shuffle</button>
+            <button class="action-btn" onclick="toggleView()">📋 Toggle View</button>
+            <button class="action-btn" onclick="resetProgress()">🔄 Reset</button>
+        </div>
+
+        <div class="stats">
+            <div id="statsDisplay">Card <span id="currentCard">1</span> of <span id="totalCards">0</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div id="flashcardView">
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="card-face card-front">
+                        <span class="grade-badge" id="frontGrade"></span>
+                        <span class="category-badge" id="frontCategory"></span>
+                        <div class="card-content" id="frontContent"></div>
+                        <div class="hint">Click to reveal answer</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <span class="grade-badge" id="backGrade"></span>
+                        <span class="category-badge" id="backCategory"></span>
+                        <div class="card-content" id="backContent"></div>
+                        <div class="hint">Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn" onclick="previousCard()">◀ Previous</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextCard()">Next ▶</button>
+            </div>
+        </div>
+
+        <div id="gridView" style="display: none;">
+            <div class="card-grid" id="cardGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            // Grade 6 (80+ formulas and facts)
+            // Basic Arithmetic
+            { grade: 6, category: "Arithmetic", front: "Area of Rectangle", back: "A = length × width<br>A = l × w" },
+            { grade: 6, category: "Arithmetic", front: "Area of Square", back: "A = side²<br>A = s²" },
+            { grade: 6, category: "Arithmetic", front: "Perimeter of Rectangle", back: "P = 2(length + width)<br>P = 2(l + w)" },
+            { grade: 6, category: "Arithmetic", front: "Perimeter of Square", back: "P = 4 × side<br>P = 4s" },
+            { grade: 6, category: "Arithmetic", front: "Volume of Cube", back: "V = side³<br>V = s³" },
+            { grade: 6, category: "Arithmetic", front: "Volume of Rectangular Prism", back: "V = length × width × height<br>V = l × w × h" },
+            { grade: 6, category: "Number", front: "Percentage Formula", back: "Percentage = (Part/Whole) × 100" },
+            { grade: 6, category: "Number", front: "Average (Mean)", back: "Average = Sum of values / Number of values" },
+            { grade: 6, category: "Geometry", front: "Sum of Angles in Triangle", back: "Sum = 180°" },
+            { grade: 6, category: "Number", front: "Fraction to Decimal", back: "Divide numerator by denominator<br>Example: 3/4 = 3÷4 = 0.75" },
+            
+            // Number Operations
+            { grade: 6, category: "Number", front: "Order of Operations", back: "PEMDAS/BODMAS<br>Parentheses, Exponents,<br>Multiply/Divide, Add/Subtract<br>Example: 2+3×4 = 2+12 = 14" },
+            { grade: 6, category: "Number", front: "Decimal to Fraction", back: "Count decimal places,<br>put over power of 10<br>Example: 0.25 = 25/100 = 1/4" },
+            { grade: 6, category: "Number", front: "Percentage to Decimal", back: "Divide by 100<br>(Move decimal 2 left)<br>Example: 45% = 0.45" },
+            { grade: 6, category: "Number", front: "Decimal to Percentage", back: "Multiply by 100<br>(Move decimal 2 right)<br>Example: 0.8 = 80%" },
+            { grade: 6, category: "Number", front: "Percentage to Fraction", back: "Put over 100,<br>then simplify<br>Example: 60% = 60/100 = 3/5" },
+            { grade: 6, category: "Number", front: "Finding a Percentage of a Number", back: "Result = (Percent/100) × Number<br>Example: 20% of 50 = (20/100)×50 = 10" },
+            { grade: 6, category: "Number", front: "Adding Fractions (Same Denominator)", back: "a/c + b/c = (a+b)/c<br>Example: 2/5 + 1/5 = 3/5" },
+            { grade: 6, category: "Number", front: "Subtracting Fractions (Same Denominator)", back: "a/c - b/c = (a-b)/c<br>Example: 4/7 - 2/7 = 2/7" },
+            { grade: 6, category: "Number", front: "Multiplying Fractions", back: "(a/b) × (c/d) = (a×c)/(b×d)<br>Example: 2/3 × 3/4 = 6/12 = 1/2" },
+            { grade: 6, category: "Number", front: "Dividing Fractions", back: "(a/b) ÷ (c/d) = (a/b) × (d/c)<br>Example: 1/2 ÷ 1/4 = 1/2 × 4/1 = 2" },
+            
+            // More Fractions
+            { grade: 6, category: "Number", front: "Reciprocal of a Fraction", back: "Reciprocal of a/b = b/a<br>Example: Reciprocal of 3/4 = 4/3" },
+            { grade: 6, category: "Number", front: "Simplifying Fractions", back: "Divide numerator and denominator<br>by their GCF<br>Example: 8/12 = 2/3 (GCF=4)" },
+            { grade: 6, category: "Number", front: "Mixed Number to Improper Fraction", back: "a b/c = (a×c + b)/c<br>Example: 2 3/4 = (2×4+3)/4 = 11/4" },
+            { grade: 6, category: "Number", front: "Improper Fraction to Mixed Number", back: "Divide numerator by denominator<br>remainder becomes new numerator<br>Example: 11/4 = 2 3/4" },
+            { grade: 6, category: "Number", front: "Comparing Fractions", back: "Cross multiply or<br>find common denominator<br>Example: 2/3 vs 3/4 → 8 vs 9 → 3/4 larger" },
+            { grade: 6, category: "Number", front: "Least Common Multiple (LCM)", back: "Smallest number divisible<br>by all given numbers<br>Example: LCM(4,6) = 12" },
+            { grade: 6, category: "Number", front: "Greatest Common Factor (GCF)", back: "Largest number that divides<br>all given numbers<br>Example: GCF(12,18) = 6" },
+            { grade: 6, category: "Number", front: "Prime Number", back: "Number with exactly 2 factors:<br>1 and itself<br>Examples: 2, 3, 5, 7, 11, 13..." },
+            { grade: 6, category: "Number", front: "Composite Number", back: "Number with more than<br>2 factors<br>Examples: 4, 6, 8, 9, 10..." },
+            { grade: 6, category: "Number", front: "Factor", back: "A number that divides evenly<br>into another number<br>Example: Factors of 12 are 1,2,3,4,6,12" },
+            
+            // Geometry - Perimeter & Area
+            { grade: 6, category: "Geometry", front: "Perimeter of Triangle", back: "P = a + b + c<br>(sum of all sides)<br>Example: 3+4+5 = 12 units" },
+            { grade: 6, category: "Geometry", front: "Area of Triangle (basic)", back: "A = (base × height) ÷ 2<br>A = ½bh<br>Example: ½(6)(4) = 12 sq units" },
+            { grade: 6, category: "Geometry", front: "Perimeter", back: "Sum of all sides<br>of a shape<br>Example: Square 4cm → P=16cm" },
+            { grade: 6, category: "Geometry", front: "Circumference", back: "Perimeter of a circle" },
+            { grade: 6, category: "Geometry", front: "Diameter", back: "d = 2r<br>(r = radius)<br>Example: If r=5, then d=10" },
+            { grade: 6, category: "Geometry", front: "Radius", back: "r = d/2<br>(d = diameter)<br>Example: If d=8, then r=4" },
+            { grade: 6, category: "Geometry", front: "Right Angle", back: "Angle = 90°<br>Corner of a square" },
+            { grade: 6, category: "Geometry", front: "Straight Angle", back: "Angle = 180°<br>A straight line" },
+            { grade: 6, category: "Geometry", front: "Acute Angle", back: "Angle < 90°<br>Example: 30°, 45°, 60°" },
+            { grade: 6, category: "Geometry", front: "Obtuse Angle", back: "90° < Angle < 180°<br>Example: 120°, 150°" },
+            
+            // More Geometry
+            { grade: 6, category: "Geometry", front: "Complementary Angles", back: "Two angles that sum to 90°<br>Example: 30° and 60°" },
+            { grade: 6, category: "Geometry", front: "Supplementary Angles", back: "Two angles that sum to 180°<br>Example: 110° and 70°" },
+            { grade: 6, category: "Geometry", front: "Vertical Angles", back: "Opposite angles formed by<br>intersecting lines (equal)<br>Example: Both pairs equal" },
+            { grade: 6, category: "Geometry", front: "Adjacent Angles", back: "Angles that share a<br>common side and vertex<br>Example: ∠ABC and ∠CBD" },
+            { grade: 6, category: "Geometry", front: "Equilateral Triangle", back: "All sides equal,<br>all angles = 60°<br>Example: 5-5-5 triangle" },
+            { grade: 6, category: "Geometry", front: "Isosceles Triangle", back: "Two sides equal,<br>two angles equal<br>Example: 5-5-6 triangle" },
+            { grade: 6, category: "Geometry", front: "Scalene Triangle", back: "All sides different,<br>all angles different<br>Example: 3-4-5 triangle" },
+            { grade: 6, category: "Geometry", front: "Right Triangle", back: "Has one 90° angle<br>Example: 3-4-5 triangle" },
+            { grade: 6, category: "Geometry", front: "Acute Triangle", back: "All angles < 90°<br>Example: 60°-60°-60° triangle" },
+            { grade: 6, category: "Geometry", front: "Obtuse Triangle", back: "Has one angle > 90°<br>Example: 100°-40°-40° triangle" },
+            
+            // Coordinate Geometry
+            { grade: 6, category: "Geometry", front: "Ordered Pair", back: "(x, y)<br>x = horizontal, y = vertical<br>Example: (3, 5)" },
+            { grade: 6, category: "Geometry", front: "Origin", back: "Point (0, 0)<br>where axes meet" },
+            { grade: 6, category: "Geometry", front: "X-axis", back: "Horizontal number line" },
+            { grade: 6, category: "Geometry", front: "Y-axis", back: "Vertical number line" },
+            { grade: 6, category: "Geometry", front: "Quadrant I", back: "(+, +)<br>Both coordinates positive<br>Example: (3, 4)" },
+            { grade: 6, category: "Geometry", front: "Quadrant II", back: "(-, +)<br>x negative, y positive<br>Example: (-3, 4)" },
+            { grade: 6, category: "Geometry", front: "Quadrant III", back: "(-, -)<br>Both coordinates negative<br>Example: (-3, -4)" },
+            { grade: 6, category: "Geometry", front: "Quadrant IV", back: "(+, -)<br>x positive, y negative<br>Example: (3, -4)" },
+            
+            // Statistics & Data
+            { grade: 6, category: "Statistics", front: "Mean (Average)", back: "Sum of all values ÷<br>Number of values<br>Example: (2+4+6)÷3 = 4" },
+            { grade: 6, category: "Statistics", front: "Median", back: "Middle value when data<br>is arranged in order<br>Example: 1,3,5,7,9 → median=5" },
+            { grade: 6, category: "Statistics", front: "Mode", back: "Most frequently occurring<br>value in data set<br>Example: 2,3,3,5,7 → mode=3" },
+            { grade: 6, category: "Statistics", front: "Range", back: "Range = Maximum - Minimum<br>Example: Data: 2,5,8,10 → Range=10-2=8" },
+            { grade: 6, category: "Statistics", front: "Frequency", back: "How many times a value<br>appears in data<br>Example: 3 appears 4 times" },
+            
+            // Ratios & Proportions
+            { grade: 6, category: "Ratios", front: "Ratio", back: "Comparison of two quantities<br>a:b or a/b<br>Example: 2:3 or 2/3" },
+            { grade: 6, category: "Ratios", front: "Rate", back: "Ratio comparing different units<br>Example: 60 km/hour, $5/kg" },
+            { grade: 6, category: "Ratios", front: "Unit Rate", back: "Rate with denominator of 1<br>Example: $5 per item, 30 mi/h" },
+            { grade: 6, category: "Ratios", front: "Equivalent Ratios", back: "Multiply or divide both terms<br>by same number<br>Example: 2:3 = 4:6 = 6:9" },
+            { grade: 6, category: "Ratios", front: "Simplifying Ratios", back: "Divide both terms by GCF<br>Example: 12:18 = 2:3 (÷6)" },
+            
+            // Integers
+            { grade: 6, category: "Integers", front: "Integer", back: "Whole numbers and<br>their opposites (...-2,-1,0,1,2...)" },
+            { grade: 6, category: "Integers", front: "Absolute Value", back: "|a| = distance from 0<br>(always positive)<br>Example: |-5| = 5" },
+            { grade: 6, category: "Integers", front: "Adding Integers (Same Sign)", back: "Add absolute values,<br>keep the sign<br>Example: -3 + (-5) = -8" },
+            { grade: 6, category: "Integers", front: "Adding Integers (Different Signs)", back: "Subtract absolute values,<br>use sign of larger<br>Example: -5+3 = -2" },
+            { grade: 6, category: "Integers", front: "Subtracting Integers", back: "Add the opposite<br>a - b = a + (-b)<br>Example: 5-8 = 5+(-8) = -3" },
+            { grade: 6, category: "Integers", front: "Multiplying Integers (Same Sign)", back: "Product is positive<br>Example: (-3)×(-4) = 12" },
+            { grade: 6, category: "Integers", front: "Multiplying Integers (Different Signs)", back: "Product is negative<br>Example: 3×(-4) = -12" },
+            { grade: 6, category: "Integers", front: "Dividing Integers (Same Sign)", back: "Quotient is positive<br>Example: (-12)÷(-3) = 4" },
+            { grade: 6, category: "Integers", front: "Dividing Integers (Different Signs)", back: "Quotient is negative<br>Example: 12÷(-3) = -4" },
+            
+            // Basic Algebra
+            { grade: 6, category: "Algebra", front: "Variable", back: "Letter representing<br>an unknown number<br>Example: x, y, n" },
+            { grade: 6, category: "Algebra", front: "Expression", back: "Combination of numbers,<br>variables, and operations<br>Example: 3x + 5" },
+            { grade: 6, category: "Algebra", front: "Equation", back: "Statement that two<br>expressions are equal<br>Example: 2x + 3 = 7" },
+            { grade: 6, category: "Algebra", front: "Solving for x (Addition)", back: "x + a = b<br>x = b - a<br>Example: x+3=7 → x=4" },
+            { grade: 6, category: "Algebra", front: "Solving for x (Subtraction)", back: "x - a = b<br>x = b + a<br>Example: x-3=5 → x=8" },
+            { grade: 6, category: "Algebra", front: "Solving for x (Multiplication)", back: "ax = b<br>x = b/a<br>Example: 3x=12 → x=4" },
+            { grade: 6, category: "Algebra", front: "Solving for x (Division)", back: "x/a = b<br>x = ab<br>Example: x/2=5 → x=10" },
+            { grade: 6, category: "Algebra", front: "Combining Like Terms", back: "Add/subtract coefficients<br>of same variable<br>Example: 3x+5x = 8x" },
+            { grade: 6, category: "Algebra", front: "Distributive Property", back: "a(b + c) = ab + ac<br>Example: 3(x+2) = 3x+6" },
+            { grade: 6, category: "Algebra", front: "Commutative Property (Addition)", back: "a + b = b + a<br>Example: 3+5 = 5+3" },
+            { grade: 6, category: "Algebra", front: "Commutative Property (Multiplication)", back: "a × b = b × a<br>Example: 4×5 = 5×4" },
+            { grade: 6, category: "Algebra", front: "Associative Property (Addition)", back: "(a + b) + c = a + (b + c)<br>Example: (2+3)+4 = 2+(3+4)" },
+            { grade: 6, category: "Algebra", front: "Associative Property (Multiplication)", back: "(a × b) × c = a × (b × c)<br>Example: (2×3)×4 = 2×(3×4)" },
+            { grade: 6, category: "Algebra", front: "Identity Property (Addition)", back: "a + 0 = a<br>Example: 5 + 0 = 5" },
+            { grade: 6, category: "Algebra", front: "Identity Property (Multiplication)", back: "a × 1 = a<br>Example: 7 × 1 = 7" },
+            { grade: 6, category: "Algebra", front: "Zero Property", back: "a × 0 = 0<br>Example: 999 × 0 = 0" },
+
+            // Grade 7 (80+ formulas and facts)
+            // Geometry - Circles
+            { grade: 7, category: "Geometry", front: "Area of Triangle", back: "A = ½ × base × height<br>A = ½bh" },
+            { grade: 7, category: "Geometry", front: "Circumference of Circle", back: "C = 2πr<br>or C = πd" },
+            { grade: 7, category: "Geometry", front: "Area of Circle", back: "A = πr²" },
+            { grade: 7, category: "Geometry", front: "Area of Parallelogram", back: "A = base × height<br>A = bh<br>Example: b=6, h=4 → A=24" },
+            { grade: 7, category: "Geometry", front: "Area of Trapezoid", back: "A = ½(b₁ + b₂)h<br>h = height<br>Example: b₁=5, b₂=9, h=4 → A=28" },
+            { grade: 7, category: "Geometry", front: "Area of Rhombus", back: "A = ½ × d₁ × d₂<br>d = diagonals<br>Example: d₁=6, d₂=8 → A=24" },
+            { grade: 7, category: "Geometry", front: "Perimeter of Parallelogram", back: "P = 2(a + b)<br>Example: a=5, b=3 → P=16" },
+            { grade: 7, category: "Geometry", front: "Pi (π)", back: "π ≈ 3.14 or 22/7<br>Example: Used in circle formulas" },
+            
+            // Polygon Angles
+            { grade: 7, category: "Geometry", front: "Sum of Interior Angles (Polygon)", back: "Sum = (n - 2) × 180°<br>n = number of sides<br>Example: Pentagon(n=5) → 540°" },
+            { grade: 7, category: "Geometry", front: "Each Interior Angle (Regular Polygon)", back: "Angle = [(n - 2) × 180°] / n<br>Example: Square(n=4) → 90°" },
+            { grade: 7, category: "Geometry", front: "Sum of Exterior Angles (Polygon)", back: "Sum = 360°<br>(for any polygon)<br>Example: Triangle or hexagon = 360°" },
+            { grade: 7, category: "Geometry", front: "Each Exterior Angle (Regular Polygon)", back: "Angle = 360° / n<br>Example: Hexagon(n=6) → 60°" },
+            { grade: 7, category: "Geometry", front: "Number of Diagonals in Polygon", back: "Diagonals = n(n - 3) / 2<br>Example: Pentagon(n=5) → 5 diagonals" },
+            
+            // 3D Geometry
+            { grade: 7, category: "Geometry", front: "Volume of Prism", back: "V = Base Area × height<br>V = Bh<br>Example: B=20, h=5 → V=100" },
+            { grade: 7, category: "Geometry", front: "Surface Area of Rectangular Prism", back: "SA = 2(lw + lh + wh)<br>Example: 3×4×5 → SA=94" },
+            { grade: 7, category: "Geometry", front: "Surface Area of Cube", back: "SA = 6s²<br>Example: s=3 → SA=54" },
+            { grade: 7, category: "Geometry", front: "Volume of Cylinder", back: "V = πr²h<br>Example: r=3, h=5 → V≈141.3" },
+            { grade: 7, category: "Geometry", front: "Surface Area of Cylinder", back: "SA = 2πr² + 2πrh<br>= 2πr(r + h)<br>Example: r=2, h=5 → SA≈87.96" },
+            { grade: 7, category: "Geometry", front: "Lateral Surface Area of Cylinder", back: "LSA = 2πrh<br>Example: r=3, h=4 → LSA≈75.4" },
+            
+            // Ratios and Proportions
+            { grade: 7, category: "Ratios", front: "Ratio", back: "a:b = a/b<br>Example: 3:4 or 3/4" },
+            { grade: 7, category: "Ratios", front: "Proportion", back: "a/b = c/d → ad = bc<br>(cross products)<br>Example: 2/3=4/6 → 2×6=3×4=12" },
+            { grade: 7, category: "Ratios", front: "Direct Proportion", back: "If a/b = c/d, then a and c<br>vary directly<br>Example: 2/4 = 3/6" },
+            { grade: 7, category: "Ratios", front: "Scale Factor", back: "Ratio of corresponding lengths<br>in similar figures<br>Example: 1:100 on map" },
+            { grade: 7, category: "Ratios", front: "Map Scale", back: "Map distance : Actual distance<br>Example: 1 cm : 5 km" },
+            { grade: 7, category: "Ratios", front: "Dividing in a Ratio", back: "Parts = ratio × (total/sum of ratio)<br>Example: 60 in 2:3 → 24:36" },
+            
+            // Percentages
+            { grade: 7, category: "Percentages", front: "Percentage Increase", back: "% Increase = [(New - Old)/Old] × 100<br>Example: 50→60 = 20% increase" },
+            { grade: 7, category: "Percentages", front: "Percentage Decrease", back: "% Decrease = [(Old - New)/Old] × 100<br>Example: 100→80 = 20% decrease" },
+            { grade: 7, category: "Percentages", front: "Percentage Change", back: "% Change = [(Change)/Original] × 100<br>Example: 40→50, change=10/40=25%" },
+            { grade: 7, category: "Percentages", front: "Finding Original After Increase", back: "Original = New / (1 + rate)<br>Example: 120 after 20% → 120/1.2=100" },
+            { grade: 7, category: "Percentages", front: "Finding Original After Decrease", back: "Original = New / (1 - rate)<br>Example: 80 after 20% → 80/0.8=100" },
+            { grade: 7, category: "Percentages", front: "Successive Percentages", back: "Final = Original × (1 ± r₁) × (1 ± r₂)<br>Example: 100×1.1×0.9=99" },
+            { grade: 7, category: "Percentages", front: "Discount", back: "Discount = Marked Price × (Discount%/100)<br>Example: $100 at 20% = $20 off" },
+            { grade: 7, category: "Percentages", front: "Sale Price", back: "Sale Price = Marked Price - Discount<br>Example: $100 - $20 = $80" },
+            
+            // Profit and Loss
+            { grade: 7, category: "Number", front: "Profit Formula", back: "Profit = Selling Price - Cost Price<br>P = SP - CP<br>Example: SP=$60, CP=$40 → P=$20" },
+            { grade: 7, category: "Number", front: "Loss Formula", back: "Loss = Cost Price - Selling Price<br>L = CP - SP<br>Example: CP=$50, SP=$40 → L=$10" },
+            { grade: 7, category: "Number", front: "Profit Percentage", back: "Profit% = (Profit/CP) × 100<br>Example: P=$20, CP=$100 → 20%" },
+            { grade: 7, category: "Number", front: "Loss Percentage", back: "Loss% = (Loss/CP) × 100<br>Example: L=$10, CP=$50 → 20%" },
+            { grade: 7, category: "Number", front: "SP when Profit% is given", back: "SP = CP × (1 + Profit%/100)<br>Example: CP=$100, 20% → SP=$120" },
+            { grade: 7, category: "Number", front: "SP when Loss% is given", back: "SP = CP × (1 - Loss%/100)<br>Example: CP=$100, 20% → SP=$80" },
+            { grade: 7, category: "Number", front: "CP when Profit% is given", back: "CP = SP / (1 + Profit%/100)<br>Example: SP=$120, 20% → CP=$100" },
+            { grade: 7, category: "Number", front: "CP when Loss% is given", back: "CP = SP / (1 - Loss%/100)<br>Example: SP=$80, 20% → CP=$100" },
+            
+            // Simple Interest
+            { grade: 7, category: "Algebra", front: "Simple Interest", back: "I = (P × R × T) / 100<br>or I = PRT<br>Example: P=$1000,R=5%,T=2y → I=$100" },
+            { grade: 7, category: "Algebra", front: "Amount in Simple Interest", back: "A = P + I<br>A = P(1 + RT)<br>Example: P=$1000,I=$100 → A=$1100" },
+            { grade: 7, category: "Algebra", front: "Principal (SI)", back: "P = (I × 100) / (R × T)<br>Example: I=$100,R=5%,T=2y → P=$1000" },
+            { grade: 7, category: "Algebra", front: "Rate (SI)", back: "R = (I × 100) / (P × T)<br>Example: I=$100,P=$1000,T=2y → R=5%" },
+            { grade: 7, category: "Algebra", front: "Time (SI)", back: "T = (I × 100) / (P × R)<br>Example: I=$100,P=$1000,R=5% → T=2y" },
+            
+            // Speed, Distance, Time
+            { grade: 7, category: "Algebra", front: "Distance Formula", back: "Distance = Speed × Time<br>D = ST<br>Example: 60 km/h × 2h = 120 km" },
+            { grade: 7, category: "Algebra", front: "Speed Formula", back: "Speed = Distance / Time<br>S = D/T<br>Example: 120 km / 2h = 60 km/h" },
+            { grade: 7, category: "Algebra", front: "Time Formula", back: "Time = Distance / Speed<br>T = D/S<br>Example: 120 km / 60 km/h = 2h" },
+            { grade: 7, category: "Algebra", front: "Average Speed", back: "Avg Speed = Total Distance / Total Time<br>Example: 150 km in 3h = 50 km/h" },
+            { grade: 7, category: "Algebra", front: "Speed Conversion (km/h to m/s)", back: "m/s = (km/h) × (5/18)<br>Example: 72 km/h = 20 m/s" },
+            { grade: 7, category: "Algebra", front: "Speed Conversion (m/s to km/h)", back: "km/h = (m/s) × (18/5)<br>Example: 10 m/s = 36 km/h" },
+            
+            // Exponents
+            { grade: 7, category: "Algebra", front: "Exponent Notation", back: "aⁿ = a × a × a... (n times)<br>Example: 2³ = 2×2×2 = 8" },
+            { grade: 7, category: "Algebra", front: "Product of Powers", back: "aᵐ × aⁿ = aᵐ⁺ⁿ<br>Example: 2³ × 2² = 2⁵ = 32" },
+            { grade: 7, category: "Algebra", front: "Quotient of Powers", back: "aᵐ / aⁿ = aᵐ⁻ⁿ<br>Example: 2⁵ / 2² = 2³ = 8" },
+            { grade: 7, category: "Algebra", front: "Power of a Power", back: "(aᵐ)ⁿ = aᵐⁿ<br>Example: (2³)² = 2⁶ = 64" },
+            { grade: 7, category: "Algebra", front: "Power of a Product", back: "(ab)ⁿ = aⁿbⁿ<br>Example: (2×3)² = 2²×3² = 36" },
+            { grade: 7, category: "Algebra", front: "Power of a Quotient", back: "(a/b)ⁿ = aⁿ/bⁿ<br>Example: (4/2)² = 4²/2² = 4" },
+            { grade: 7, category: "Algebra", front: "Zero Exponent", back: "a⁰ = 1 (a ≠ 0)<br>Example: 5⁰ = 1, 100⁰ = 1" },
+            { grade: 7, category: "Algebra", front: "Negative Exponent", back: "a⁻ⁿ = 1/aⁿ<br>Example: 2⁻³ = 1/8" },
+            { grade: 7, category: "Algebra", front: "Fractional Exponent", back: "a^(1/n) = ⁿ√a<br>Example: 8^(1/3) = ³√8 = 2" },
+            
+            // Algebraic Expressions
+            { grade: 7, category: "Algebra", front: "Linear Equation in One Variable", back: "ax + b = c<br>(degree = 1)<br>Example: 2x + 3 = 7" },
+            { grade: 7, category: "Algebra", front: "Coefficient", back: "Number multiplying a variable<br>(in 3x, coefficient is 3)<br>Example: In 5y, coefficient = 5" },
+            { grade: 7, category: "Algebra", front: "Constant", back: "Term without a variable<br>Example: In 3x + 7, constant = 7" },
+            { grade: 7, category: "Algebra", front: "Like Terms", back: "Terms with same variables<br>and exponents<br>Example: 3x² and 5x²" },
+            { grade: 7, category: "Algebra", front: "Adding Algebraic Expressions", back: "Combine like terms<br>Example: 3x + 5x = 8x" },
+            { grade: 7, category: "Algebra", front: "Subtracting Algebraic Expressions", back: "Change signs and add<br>Example: (5x)-(3x) = 2x" },
+            { grade: 7, category: "Algebra", front: "Distributive Property", back: "a(b + c) = ab + ac<br>Example: 2(3 + 4) = 6 + 8 = 14" },
+            { grade: 7, category: "Algebra", front: "Expanding (a + b)²", back: "(a + b)² = a² + 2ab + b²<br>Example: (x+3)² = x²+6x+9" },
+            { grade: 7, category: "Algebra", front: "Expanding (a - b)²", back: "(a - b)² = a² - 2ab + b²<br>Example: (x-2)² = x²-4x+4" },
+            { grade: 7, category: "Algebra", front: "Difference of Squares", back: "a² - b² = (a + b)(a - b)<br>Example: x²-9 = (x+3)(x-3)" },
+            
+            // Statistics
+            { grade: 7, category: "Statistics", front: "Mean", back: "Sum of all values / Number of values<br>Example: (2+4+6)/3 = 4" },
+            { grade: 7, category: "Statistics", front: "Median (Odd numbers)", back: "Middle value when ordered<br>Example: 1,3,5 → median = 3" },
+            { grade: 7, category: "Statistics", front: "Median (Even numbers)", back: "Average of two middle values<br>Example: 2,4,6,8 → median = 5" },
+            { grade: 7, category: "Statistics", front: "Mode", back: "Most frequently occurring value<br>Example: 2,3,3,5 → mode = 3" },
+            { grade: 7, category: "Statistics", front: "Range", back: "Range = Highest - Lowest<br>Example: 2,5,8,10 → Range = 8" },
+            { grade: 7, category: "Statistics", front: "Weighted Mean", back: "Σ(value × weight) / Σ(weights)<br>Example: (80×3+90×2)/5 = 84" },
+            
+            // Number Theory
+            { grade: 7, category: "Number", front: "Even Number", back: "Divisible by 2<br>(form: 2n)<br>Example: 2, 4, 6, 8, 10" },
+            { grade: 7, category: "Number", front: "Odd Number", back: "Not divisible by 2<br>(form: 2n + 1)<br>Example: 1, 3, 5, 7, 9" },
+            { grade: 7, category: "Number", front: "Divisibility by 2", back: "Last digit is even<br>Example: 246 (6 is even)" },
+            { grade: 7, category: "Number", front: "Divisibility by 3", back: "Sum of digits divisible by 3<br>Example: 123 (1+2+3=6)" },
+            { grade: 7, category: "Number", front: "Divisibility by 4", back: "Last two digits divisible by 4<br>Example: 316 (16÷4=4)" },
+            { grade: 7, category: "Number", front: "Divisibility by 5", back: "Last digit is 0 or 5<br>Example: 125, 340" },
+            { grade: 7, category: "Number", front: "Divisibility by 6", back: "Divisible by both 2 and 3<br>Example: 24 (even & 2+4=6)" },
+            { grade: 7, category: "Number", front: "Divisibility by 8", back: "Last three digits divisible by 8<br>Example: 1,216 (216÷8=27)" },
+            { grade: 7, category: "Number", front: "Divisibility by 9", back: "Sum of digits divisible by 9<br>Example: 729 (7+2+9=18)" },
+            { grade: 7, category: "Number", front: "Divisibility by 10", back: "Last digit is 0<br>Example: 150, 2340" },
+            { grade: 7, category: "Number", front: "Divisibility by 11", back: "Difference of sum of alternate digits<br>divisible by 11<br>Example: 121 (1+1-2=0)" },
+
+            // Grade 8 (80+ formulas and facts)
+            // Pythagorean Theorem & Applications
+            { grade: 8, category: "Geometry", front: "Pythagorean Theorem", back: "a² + b² = c²<br>(c is hypotenuse)" },
+            { grade: 8, category: "Geometry", front: "Finding Hypotenuse", back: "c = √(a² + b²)" },
+            { grade: 8, category: "Geometry", front: "Finding a Leg", back: "a = √(c² - b²)" },
+            { grade: 8, category: "Geometry", front: "Pythagorean Triple", back: "Set of 3 integers satisfying a² + b² = c²<br>(e.g., 3-4-5, 5-12-13)" },
+            { grade: 8, category: "Geometry", front: "Common Pythagorean Triple 1", back: "3² + 4² = 5²<br>(9 + 16 = 25)" },
+            { grade: 8, category: "Geometry", front: "Common Pythagorean Triple 2", back: "5² + 12² = 13²<br>(25 + 144 = 169)" },
+            { grade: 8, category: "Geometry", front: "Common Pythagorean Triple 3", back: "8² + 15² = 17²<br>(64 + 225 = 289)" },
+            
+            // Coordinate Geometry & Linear Equations
+            { grade: 8, category: "Algebra", front: "Slope Formula", back: "m = (y₂ - y₁)/(x₂ - x₁)<br>= rise/run" },
+            { grade: 8, category: "Algebra", front: "Slope-Intercept Form", back: "y = mx + b<br>m = slope, b = y-intercept" },
+            { grade: 8, category: "Algebra", front: "Point-Slope Form", back: "y - y₁ = m(x - x₁)" },
+            { grade: 8, category: "Algebra", front: "Standard Form (Linear)", back: "Ax + By = C<br>A, B, C are integers" },
+            { grade: 8, category: "Algebra", front: "Finding Slope from Equation", back: "Rearrange to y = mx + b<br>m is the slope" },
+            { grade: 8, category: "Algebra", front: "Horizontal Line Slope", back: "m = 0<br>Equation: y = b" },
+            { grade: 8, category: "Algebra", front: "Vertical Line Slope", back: "m = undefined<br>Equation: x = a" },
+            { grade: 8, category: "Algebra", front: "Parallel Lines", back: "Same slope<br>m₁ = m₂" },
+            { grade: 8, category: "Algebra", front: "Perpendicular Lines", back: "m₁ × m₂ = -1<br>m₂ = -1/m₁" },
+            { grade: 8, category: "Algebra", front: "X-intercept", back: "Point where y = 0<br>Set y = 0, solve for x" },
+            { grade: 8, category: "Algebra", front: "Y-intercept", back: "Point where x = 0<br>Set x = 0, solve for y" },
+            { grade: 8, category: "Geometry", front: "Distance Formula", back: "d = √[(x₂ - x₁)² + (y₂ - y₁)²]" },
+            { grade: 8, category: "Geometry", front: "Midpoint Formula", back: "M = ((x₁ + x₂)/2, (y₁ + y₂)/2)" },
+            
+            // Systems of Equations
+            { grade: 8, category: "Algebra", front: "System of Linear Equations", back: "Two or more equations<br>with same variables" },
+            { grade: 8, category: "Algebra", front: "Substitution Method", back: "1. Solve one for a variable<br>2. Substitute into other" },
+            { grade: 8, category: "Algebra", front: "Elimination Method", back: "Add/subtract equations to<br>eliminate one variable" },
+            { grade: 8, category: "Algebra", front: "Graphing Method", back: "Solution is where<br>lines intersect" },
+            { grade: 8, category: "Algebra", front: "One Solution (System)", back: "Lines intersect at 1 point<br>(different slopes)" },
+            { grade: 8, category: "Algebra", front: "No Solution (System)", back: "Parallel lines<br>(same slope, different intercept)" },
+            { grade: 8, category: "Algebra", front: "Infinite Solutions (System)", back: "Same line<br>(same slope and intercept)" },
+            
+            // Algebraic Identities
+            { grade: 8, category: "Algebra", front: "(a + b)²", back: "a² + 2ab + b²<br>Example: (x+3)² = x²+6x+9" },
+            { grade: 8, category: "Algebra", front: "(a - b)²", back: "a² - 2ab + b²<br>Example: (x-4)² = x²-8x+16" },
+            { grade: 8, category: "Algebra", front: "a² - b²", back: "(a + b)(a - b)<br>Example: x²-25 = (x+5)(x-5)" },
+            { grade: 8, category: "Algebra", front: "(a + b)³", back: "a³ + 3a²b + 3ab² + b³<br>Example: (x+2)³ = x³+6x²+12x+8" },
+            { grade: 8, category: "Algebra", front: "(a - b)³", back: "a³ - 3a²b + 3ab² - b³<br>Example: (x-1)³ = x³-3x²+3x-1" },
+            { grade: 8, category: "Algebra", front: "a³ + b³", back: "(a + b)(a² - ab + b²)<br>Example: x³+8 = (x+2)(x²-2x+4)" },
+            { grade: 8, category: "Algebra", front: "a³ - b³", back: "(a - b)(a² + ab + b²)<br>Example: x³-27 = (x-3)(x²+3x+9)" },
+            { grade: 8, category: "Algebra", front: "(a + b + c)²", back: "a² + b² + c² + 2ab + 2bc + 2ca<br>Example: (x+y+1)²" },
+            { grade: 8, category: "Algebra", front: "a² + b² (in terms of a+b, ab)", back: "(a + b)² - 2ab<br>Example: If a+b=5, ab=6 → a²+b²=13" },
+            
+            // Polynomials
+            { grade: 8, category: "Algebra", front: "Monomial", back: "Expression with 1 term<br>Example: 3x², -5y, 7" },
+            { grade: 8, category: "Algebra", front: "Binomial", back: "Expression with 2 terms<br>Example: x + 5, 2y - 3" },
+            { grade: 8, category: "Algebra", front: "Trinomial", back: "Expression with 3 terms<br>Example: x² + 3x + 2" },
+            { grade: 8, category: "Algebra", front: "Polynomial", back: "Expression with one or<br>more terms<br>Example: 2x³-5x²+3x-1" },
+            { grade: 8, category: "Algebra", front: "Degree of Polynomial", back: "Highest power of variable<br>Example: 3x⁴+2x² has degree 4" },
+            { grade: 8, category: "Algebra", front: "Leading Coefficient", back: "Coefficient of term with<br>highest degree<br>Example: In 5x³+2x, it's 5" },
+            { grade: 8, category: "Algebra", front: "Adding Polynomials", back: "Combine like terms<br>Example: (2x+3)+(x+5) = 3x+8" },
+            { grade: 8, category: "Algebra", front: "Subtracting Polynomials", back: "Distribute negative,<br>combine like terms<br>Example: (3x²-x)-(x²+2x) = 2x²-3x" },
+            { grade: 8, category: "Algebra", front: "Multiplying Monomials", back: "Multiply coefficients,<br>add exponents<br>Example: 3x² × 4x³ = 12x⁵" },
+            
+            // Factoring
+            { grade: 8, category: "Algebra", front: "GCF Factoring", back: "Factor out Greatest<br>Common Factor<br>Example: 6x²+9x = 3x(2x+3)" },
+            { grade: 8, category: "Algebra", front: "Factoring x² + bx + c", back: "Find two numbers that<br>multiply to c, add to b<br>Example: x²+5x+6 = (x+2)(x+3)" },
+            { grade: 8, category: "Algebra", front: "Factoring a² - b²", back: "(a + b)(a - b)<br>Example: x²-16 = (x+4)(x-4)" },
+            { grade: 8, category: "Algebra", front: "Factoring Perfect Square", back: "a² + 2ab + b² = (a + b)²<br>a² - 2ab + b² = (a - b)²<br>Example: x²+6x+9 = (x+3)²" },
+            
+            // Exponents & Radicals
+            { grade: 8, category: "Algebra", front: "Product Rule (Exponents)", back: "aᵐ · aⁿ = aᵐ⁺ⁿ<br>Example: x³ · x² = x⁵" },
+            { grade: 8, category: "Algebra", front: "Quotient Rule (Exponents)", back: "aᵐ / aⁿ = aᵐ⁻ⁿ<br>Example: x⁵ / x² = x³" },
+            { grade: 8, category: "Algebra", front: "Power Rule (Exponents)", back: "(aᵐ)ⁿ = aᵐⁿ<br>Example: (x²)³ = x⁶" },
+            { grade: 8, category: "Algebra", front: "Zero Exponent", back: "a⁰ = 1 (a ≠ 0)<br>Example: 5⁰ = 1, x⁰ = 1" },
+            { grade: 8, category: "Algebra", front: "Negative Exponent", back: "a⁻ⁿ = 1/aⁿ<br>Example: 2⁻³ = 1/8, x⁻² = 1/x²" },
+            { grade: 8, category: "Algebra", front: "Fractional Exponent", back: "a^(m/n) = ⁿ√(aᵐ)<br>Example: 8^(2/3) = ³√64 = 4" },
+            { grade: 8, category: "Algebra", front: "Square Root Property", back: "√(ab) = √a · √b<br>Example: √12 = √4 · √3 = 2√3" },
+            { grade: 8, category: "Algebra", front: "Quotient Property (Radicals)", back: "√(a/b) = √a / √b<br>Example: √(16/4) = 4/2 = 2" },
+            { grade: 8, category: "Algebra", front: "Simplifying Radicals", back: "Factor out perfect squares<br>from under radical<br>Example: √50 = 5√2" },
+            { grade: 8, category: "Algebra", front: "Rationalizing Denominator", back: "Multiply by √a/√a to<br>eliminate radical in denominator<br>Example: 1/√2 = √2/2" },
+            
+            // Direct and Inverse Variation
+            { grade: 8, category: "Algebra", front: "Direct Variation", back: "y = kx<br>k is constant of variation<br>Example: y=3x, k=3" },
+            { grade: 8, category: "Algebra", front: "Inverse Variation", back: "y = k/x or xy = k<br>k is constant<br>Example: y=12/x, k=12" },
+            { grade: 8, category: "Algebra", front: "Joint Variation", back: "y = kxz<br>y varies with x and z<br>Example: y=2xz, k=2" },
+            { grade: 8, category: "Algebra", front: "Finding k (Direct)", back: "k = y/x<br>Example: If y=6, x=2 → k=3" },
+            { grade: 8, category: "Algebra", front: "Finding k (Inverse)", back: "k = xy<br>Example: If y=4, x=3 → k=12" },
+            
+            // 3D Geometry
+            { grade: 8, category: "Geometry", front: "Volume of Cylinder", back: "V = πr²h<br>Example: r=3, h=5 → V≈141.3" },
+            { grade: 8, category: "Geometry", front: "Surface Area of Cylinder", back: "SA = 2πr² + 2πrh<br>= 2πr(r + h)<br>Example: r=2, h=5 → SA≈87.96" },
+            { grade: 8, category: "Geometry", front: "Volume of Cone", back: "V = (1/3)πr²h<br>Example: r=3, h=4 → V≈37.7" },
+            { grade: 8, category: "Geometry", front: "Surface Area of Cone", back: "SA = πr² + πrl<br>l = slant height<br>Example: r=3, l=5 → SA≈75.4" },
+            { grade: 8, category: "Geometry", front: "Slant Height of Cone", back: "l = √(r² + h²)<br>Example: r=3, h=4 → l=5" },
+            { grade: 8, category: "Geometry", front: "Volume of Sphere", back: "V = (4/3)πr³<br>Example: r=3 → V≈113.1" },
+            { grade: 8, category: "Geometry", front: "Surface Area of Sphere", back: "SA = 4πr²<br>Example: r=5 → SA≈314.2" },
+            { grade: 8, category: "Geometry", front: "Volume of Pyramid", back: "V = (1/3) × Base Area × height<br>Example: Base=25, h=6 → V=50" },
+            
+            // Compound Interest
+            { grade: 8, category: "Number", front: "Compound Interest (Annual)", back: "A = P(1 + r)ⁿ<br>n = years<br>Example: P=$1000,r=10%,n=2 → A=$1210" },
+            { grade: 8, category: "Number", front: "Compound Interest (General)", back: "A = P(1 + r/n)^(nt)<br>n = compounds per year<br>Example: Quarterly n=4" },
+            { grade: 8, category: "Number", front: "CI Formula for Interest", back: "CI = A - P<br>Example: A=$1210, P=$1000 → CI=$210" },
+            { grade: 8, category: "Number", front: "Amount in CI", back: "Amount = Principal + Interest<br>Example: P=$1000, I=$210 → A=$1210" },
+            { grade: 8, category: "Number", front: "CI for 2 years", back: "CI = P[(1 + r)² - 1]<br>Example: P=$100, r=10% → CI=$21" },
+            { grade: 8, category: "Number", front: "Difference between CI and SI", back: "Difference = P × r² (for 2 years)<br>Example: P=$100, r=10% → Diff=$1" },
+            
+            // Scientific Notation
+            { grade: 8, category: "Number", front: "Scientific Notation", back: "a × 10ⁿ<br>where 1 ≤ a < 10<br>Example: 5,000 = 5×10³" },
+            { grade: 8, category: "Number", front: "Large Numbers (Scientific)", back: "Move decimal left,<br>exponent is positive<br>Example: 2500 = 2.5×10³" },
+            { grade: 8, category: "Number", front: "Small Numbers (Scientific)", back: "Move decimal right,<br>exponent is negative<br>Example: 0.0025 = 2.5×10⁻³" },
+            { grade: 8, category: "Number", front: "Multiplying (Scientific)", back: "(a × 10ᵐ)(b × 10ⁿ) = ab × 10^(m+n)<br>Example: (2×10³)(3×10²) = 6×10⁵" },
+            { grade: 8, category: "Number", front: "Dividing (Scientific)", back: "(a × 10ᵐ)/(b × 10ⁿ) = (a/b) × 10^(m-n)<br>Example: (6×10⁵)/(2×10²) = 3×10³" },
+            
+            // Functions
+            { grade: 8, category: "Algebra", front: "Function", back: "Relation where each input<br>has exactly one output<br>Example: f(x) = 2x + 1" },
+            { grade: 8, category: "Algebra", front: "Function Notation", back: "f(x) = output when input is x<br>Example: f(3) means x=3" },
+            { grade: 8, category: "Algebra", front: "Domain", back: "Set of all possible<br>input values (x)<br>Example: All real numbers" },
+            { grade: 8, category: "Algebra", front: "Range", back: "Set of all possible<br>output values (y)<br>Example: y ≥ 0 for y=x²" },
+            { grade: 8, category: "Algebra", front: "Vertical Line Test", back: "If vertical line crosses graph<br>once, it's a function<br>Example: Circle fails test" },
+            { grade: 8, category: "Algebra", front: "Linear Function", back: "f(x) = mx + b<br>(degree 1)<br>Example: f(x) = 2x + 3" },
+            { grade: 8, category: "Algebra", front: "Constant Function", back: "f(x) = c<br>(horizontal line)<br>Example: f(x) = 5" },
+            
+            // Inequalities
+            { grade: 8, category: "Algebra", front: "Solving Inequalities", back: "Same as equations, but<br>flip sign when × or ÷ by negative<br>Example: -2x>4 → x<-2" },
+            { grade: 8, category: "Algebra", front: "Graphing x > a", back: "Open circle at a,<br>shade right<br>Example: x > 3" },
+            { grade: 8, category: "Algebra", front: "Graphing x ≥ a", back: "Closed circle at a,<br>shade right<br>Example: x ≥ 2" },
+            { grade: 8, category: "Algebra", front: "Graphing x < a", back: "Open circle at a,<br>shade left<br>Example: x < -1" },
+            { grade: 8, category: "Algebra", front: "Graphing x ≤ a", back: "Closed circle at a,<br>shade left<br>Example: x ≤ 5" },
+            { grade: 8, category: "Algebra", front: "Compound Inequality (AND)", back: "a < x < b<br>x between a and b<br>Example: -2 < x < 5" },
+            { grade: 8, category: "Algebra", front: "Compound Inequality (OR)", back: "x < a OR x > b<br>x outside interval<br>Example: x<-3 OR x>3" },
+            { grade: 8, category: "Geometry", front: "Pythagorean Theorem", back: "a² + b² = c²<br>(c is hypotenuse)<br>Example: 3²+4²=5²" },
+            { grade: 8, category: "Algebra", front: "Slope Formula", back: "m = (y₂ - y₁)/(x₂ - x₁)<br>Example: (1,2) to (3,6) → m=2" },
+            { grade: 8, category: "Algebra", front: "Slope-Intercept Form", back: "y = mx + b<br>m=slope, b=y-intercept<br>Example: y=2x+3" },
+            { grade: 8, category: "Algebra", front: "Point-Slope Form", back: "y - y₁ = m(x - x₁)<br>Example: y-2=3(x-1)" },
+            { grade: 8, category: "Number", front: "Compound Interest", back: "A = P(1 + r/n)^(nt)<br>n=times per year<br>Example: Monthly n=12" },
+            { grade: 8, category: "Geometry", front: "Volume of Cylinder", back: "V = πr²h<br>Example: r=2, h=5 → V≈62.8" },
+            { grade: 8, category: "Geometry", front: "Surface Area of Cylinder", back: "SA = 2πr² + 2πrh<br>Example: r=3, h=4 → SA≈131.9" },
+            { grade: 8, category: "Algebra", front: "Difference of Squares", back: "a² - b² = (a+b)(a-b)<br>Example: x²-9 = (x+3)(x-3)" },
+            { grade: 8, category: "Algebra", front: "Perfect Square Trinomial", back: "(a±b)² = a² ± 2ab + b²<br>Example: x²+4x+4 = (x+2)²" },
+            { grade: 8, category: "Geometry", front: "Area of Trapezoid", back: "A = ½(b₁ + b₂)h<br>Example: b₁=4, b₂=6, h=3 → A=15" },
+
+            // Grade 9 (80+ formulas and facts)
+            // Quadratic Equations
+            { grade: 9, category: "Algebra", front: "Quadratic Equation", back: "ax² + bx + c = 0<br>a ≠ 0, degree = 2" },
+            { grade: 9, category: "Algebra", front: "Quadratic Formula", back: "x = [-b ± √(b² - 4ac)] / 2a" },
+            { grade: 9, category: "Algebra", front: "Discriminant", back: "Δ = b² - 4ac" },
+            { grade: 9, category: "Algebra", front: "Discriminant > 0", back: "Two distinct real roots" },
+            { grade: 9, category: "Algebra", front: "Discriminant = 0", back: "One repeated real root<br>(two equal roots)" },
+            { grade: 9, category: "Algebra", front: "Discriminant < 0", back: "No real roots<br>(two complex roots)" },
+            { grade: 9, category: "Algebra", front: "Standard Form (Quadratic)", back: "y = ax² + bx + c" },
+            { grade: 9, category: "Algebra", front: "Vertex Form (Quadratic)", back: "y = a(x - h)² + k<br>Vertex: (h, k)" },
+            { grade: 9, category: "Algebra", front: "Factored Form (Quadratic)", back: "y = a(x - r₁)(x - r₂)<br>Roots: r₁, r₂" },
+            { grade: 9, category: "Algebra", front: "Axis of Symmetry", back: "x = -b / 2a" },
+            { grade: 9, category: "Algebra", front: "Vertex x-coordinate", back: "h = -b / 2a" },
+            { grade: 9, category: "Algebra", front: "Vertex y-coordinate", back: "k = f(-b/2a)<br>or k = (4ac - b²) / 4a" },
+            { grade: 9, category: "Algebra", front: "Completing the Square", back: "x² + bx + (b/2)² = (x + b/2)²" },
+            { grade: 9, category: "Algebra", front: "Sum of Roots", back: "α + β = -b/a" },
+            { grade: 9, category: "Algebra", front: "Product of Roots", back: "αβ = c/a" },
+            { grade: 9, category: "Algebra", front: "Forming Quadratic from Roots", back: "x² - (sum of roots)x + (product) = 0" },
+            { grade: 9, category: "Algebra", front: "Maximum/Minimum of Parabola", back: "At vertex (h, k)<br>Max if a < 0, Min if a > 0" },
+            { grade: 9, category: "Algebra", front: "Y-intercept (Quadratic)", back: "Set x = 0, y = c" },
+            { grade: 9, category: "Algebra", front: "X-intercepts (Quadratic)", back: "Set y = 0, solve for x<br>(roots of equation)" },
+            
+            // Polynomials
+            { grade: 9, category: "Algebra", front: "Polynomial in x", back: "P(x) = aₙxⁿ + ... + a₁x + a₀" },
+            { grade: 9, category: "Algebra", front: "Degree of Polynomial", back: "Highest power of variable" },
+            { grade: 9, category: "Algebra", front: "Zero/Root of Polynomial", back: "Value where P(x) = 0" },
+            { grade: 9, category: "Algebra", front: "Remainder Theorem", back: "When P(x) ÷ (x - a),<br>remainder = P(a)" },
+            { grade: 9, category: "Algebra", front: "Factor Theorem", back: "If P(a) = 0, then<br>(x - a) is a factor" },
+            { grade: 9, category: "Algebra", front: "Polynomial Division", back: "Divide like long division<br>or synthetic division<br>Example: (x²+5x+6)÷(x+2) = x+3" },
+            { grade: 9, category: "Algebra", front: "Cubic Polynomial", back: "ax³ + bx² + cx + d<br>degree = 3<br>Example: 2x³-3x²+x-5" },
+            { grade: 9, category: "Algebra", front: "Quartic Polynomial", back: "ax⁴ + bx³ + cx² + dx + e<br>degree = 4<br>Example: x⁴+2x³-x²+3x-1" },
+            
+            // Coordinate Geometry Advanced
+            { grade: 9, category: "Geometry", front: "Distance Formula", back: "d = √[(x₂ - x₁)² + (y₂ - y₁)²]<br>Example: (1,2) to (4,6) → d=5" },
+            { grade: 9, category: "Geometry", front: "Midpoint Formula", back: "M = ((x₁ + x₂)/2, (y₁ + y₂)/2)<br>Example: (2,3) & (6,7) → M=(4,5)" },
+            { grade: 9, category: "Geometry", front: "Section Formula (Internal)", back: "((mx₂ + nx₁)/(m+n), (my₂ + ny₁)/(m+n))<br>Ratio m:n<br>Example: 2:3 division" },
+            { grade: 9, category: "Geometry", front: "Section Formula (External)", back: "((mx₂ - nx₁)/(m-n), (my₂ - ny₁)/(m-n))<br>Ratio m:n<br>Example: 3:2 external" },
+            { grade: 9, category: "Geometry", front: "Centroid of Triangle", back: "G = ((x₁+x₂+x₃)/3, (y₁+y₂+y₃)/3)<br>Example: (0,0)(3,0)(0,4) → G=(1,4/3)" },
+            { grade: 9, category: "Geometry", front: "Area of Triangle (Coordinates)", back: "A = ½|x₁(y₂-y₃) + x₂(y₃-y₁) + x₃(y₁-y₂)|<br>Example: For vertices (0,0)(4,0)(2,3) → A=6" },
+            { grade: 9, category: "Geometry", front: "Collinear Points Condition", back: "Area of triangle = 0<br>or slopes are equal<br>Example: (1,2)(2,4)(3,6) collinear" },
+            { grade: 9, category: "Geometry", front: "Slope of Line", back: "m = tan θ<br>θ = angle with x-axis<br>Example: θ=45° → m=1" },
+            { grade: 9, category: "Geometry", front: "Angle Between Two Lines", back: "tan θ = |(m₁ - m₂)/(1 + m₁m₂)|<br>Example: m₁=1, m₂=0 → θ=45°" },
+            
+            // Circles
+            { grade: 9, category: "Geometry", front: "Standard Equation of Circle", back: "(x - h)² + (y - k)² = r²<br>Center: (h, k), radius: r<br>Example: (x-2)²+(y-3)²=25" },
+            { grade: 9, category: "Geometry", front: "Circle at Origin", back: "x² + y² = r²<br>Example: x²+y²=9 (r=3)" },
+            { grade: 9, category: "Geometry", front: "General Equation of Circle", back: "x² + y² + 2gx + 2fy + c = 0<br>Example: x²+y²-4x+6y-3=0" },
+            { grade: 9, category: "Geometry", front: "Center from General Form", back: "Center = (-g, -f)<br>Example: 2gx=-4x → g=-2 → center x=2" },
+            { grade: 9, category: "Geometry", front: "Radius from General Form", back: "r = √(g² + f² - c)<br>Example: g=2, f=3, c=1 → r=√12" },
+            { grade: 9, category: "Geometry", front: "Diameter of Circle", back: "d = 2r<br>Example: r=5 → d=10" },
+            { grade: 9, category: "Geometry", front: "Chord Length", back: "c = 2√(r² - d²)<br>d = perpendicular distance<br>Example: r=5, d=3 → c=8" },
+            { grade: 9, category: "Geometry", front: "Arc Length", back: "L = (θ/360°) × 2πr<br>θ in degrees<br>Example: θ=60°, r=6 → L=2π" },
+            { grade: 9, category: "Geometry", front: "Arc Length (Radians)", back: "L = rθ<br>θ in radians<br>Example: r=5, θ=π/2 → L=5π/2" },
+            { grade: 9, category: "Geometry", front: "Area of Sector", back: "A = (θ/360°) × πr²<br>θ in degrees<br>Example: θ=90°, r=4 → A=4π" },
+            { grade: 9, category: "Geometry", front: "Area of Sector (Radians)", back: "A = ½r²θ<br>θ in radians<br>Example: r=6, θ=π/3 → A=6π" },
+            { grade: 9, category: "Geometry", front: "Area of Segment", back: "A = (Area of Sector) - (Area of Triangle)<br>Example: Sector - inscribed triangle" },
+            
+            // Heron's Formula & Triangle Properties
+            { grade: 9, category: "Geometry", front: "Heron's Formula", back: "A = √[s(s-a)(s-b)(s-c)]<br>Example: 3,4,5 → s=6 → A=6" },
+            { grade: 9, category: "Geometry", front: "Semi-perimeter (s)", back: "s = (a + b + c) / 2<br>Example: 3,4,5 → s=6" },
+            { grade: 9, category: "Geometry", front: "Area of Equilateral Triangle", back: "A = (√3/4) × a²<br>a = side length<br>Example: a=4 → A=4√3" },
+            { grade: 9, category: "Geometry", front: "Height of Equilateral Triangle", back: "h = (√3/2) × a<br>Example: a=6 → h=3√3" },
+            { grade: 9, category: "Geometry", front: "Perimeter of Triangle", back: "P = a + b + c<br>Example: 3,4,5 → P=12" },
+            
+            // Sequences and Series
+            { grade: 9, category: "Algebra", front: "Arithmetic Sequence", back: "aₙ = a₁ + (n - 1)d<br>d = common difference<br>Example: 2,5,8,11... d=3" },
+            { grade: 9, category: "Algebra", front: "Common Difference (AP)", back: "d = aₙ - aₙ₋₁<br>Example: 5,9,13... d=4" },
+            { grade: 9, category: "Algebra", front: "nth term (AP)", back: "aₙ = a + (n - 1)d<br>Example: a=3,d=2,n=5 → a₅=11" },
+            { grade: 9, category: "Algebra", front: "Sum of AP (n terms)", back: "Sₙ = (n/2)[2a + (n-1)d]<br>Example: First 10 of 2,4,6... → S₁₀=110" },
+            { grade: 9, category: "Algebra", front: "Sum of AP (alternate)", back: "Sₙ = (n/2)(a + l)<br>l = last term<br>Example: 1+3+5+7+9 → S₅=25" },
+            { grade: 9, category: "Algebra", front: "Arithmetic Mean", back: "A.M. = (a + b) / 2<br>Example: 4 and 10 → A.M.=7" },
+            { grade: 9, category: "Algebra", front: "Geometric Sequence", back: "aₙ = a₁ × rⁿ⁻¹<br>r = common ratio<br>Example: 2,6,18... r=3" },
+            { grade: 9, category: "Algebra", front: "Common Ratio (GP)", back: "r = aₙ / aₙ₋₁<br>Example: 3,6,12... r=2" },
+            { grade: 9, category: "Algebra", front: "nth term (GP)", back: "aₙ = arⁿ⁻¹<br>Example: a=2,r=3,n=4 → a₄=54" },
+            { grade: 9, category: "Algebra", front: "Sum of GP (n terms)", back: "Sₙ = a(rⁿ - 1)/(r - 1), r ≠ 1<br>Example: 2+6+18+54 → S₄=80" },
+            { grade: 9, category: "Algebra", front: "Sum of GP (alternate)", back: "Sₙ = a(1 - rⁿ)/(1 - r), r ≠ 1<br>Example: Same formula, different form" },
+            { grade: 9, category: "Algebra", front: "Geometric Mean", back: "G.M. = √(ab)<br>Example: 4 and 9 → G.M.=6" },
+            { grade: 9, category: "Algebra", front: "Sum of First n Natural Numbers", back: "Σn = n(n + 1) / 2<br>Example: 1+2+3+...+10 = 55" },
+            { grade: 9, category: "Algebra", front: "Sum of First n Odd Numbers", back: "Σ(2n-1) = n²<br>Example: 1+3+5+7+9 = 25 = 5²" },
+            { grade: 9, category: "Algebra", front: "Sum of First n Even Numbers", back: "Σ(2n) = n(n + 1)<br>Example: 2+4+6+8+10 = 30 = 5×6" },
+            { grade: 9, category: "Algebra", front: "Sum of Squares", back: "Σn² = n(n+1)(2n+1) / 6<br>Example: 1²+2²+3²+4² = 30" },
+            { grade: 9, category: "Algebra", front: "Sum of Cubes", back: "Σn³ = [n(n+1)/2]²<br>Example: 1³+2³+3³ = 36 = 6²" },
+            
+            // Exponential & Logarithmic (Introduction)
+            { grade: 9, category: "Algebra", front: "Exponential Growth", back: "y = a(1 + r)ᵗ<br>r = growth rate<br>Example: $100 at 5%/yr → y=100(1.05)ᵗ" },
+            { grade: 9, category: "Algebra", front: "Exponential Decay", back: "y = a(1 - r)ᵗ<br>r = decay rate<br>Example: 1000 at 10% decay → y=1000(0.9)ᵗ" },
+            { grade: 9, category: "Algebra", front: "Exponential Function", back: "f(x) = aᵇˣ<br>a > 0, b > 0, b ≠ 1<br>Example: f(x) = 2ˣ" },
+            { grade: 9, category: "Algebra", front: "Properties of Exponents (Product)", back: "aᵐ × aⁿ = aᵐ⁺ⁿ<br>Example: 2³ × 2² = 2⁵ = 32" },
+            { grade: 9, category: "Algebra", front: "Properties of Exponents (Quotient)", back: "aᵐ / aⁿ = aᵐ⁻ⁿ<br>Example: 3⁵ / 3² = 3³ = 27" },
+            { grade: 9, category: "Algebra", front: "Properties of Exponents (Power)", back: "(aᵐ)ⁿ = aᵐⁿ<br>Example: (2³)² = 2⁶ = 64" },
+            
+            // Statistics & Probability
+            { grade: 9, category: "Statistics", front: "Mean", back: "x̄ = Σx / n<br>Example: (2+4+6+8)/4 = 5" },
+            { grade: 9, category: "Statistics", front: "Median", back: "Middle value when data ordered<br>Example: 1,3,5,7,9 → median=5" },
+            { grade: 9, category: "Statistics", front: "Mode", back: "Most frequently occurring value<br>Example: 2,3,3,4,5 → mode=3" },
+            { grade: 9, category: "Statistics", front: "Range", back: "Range = Max - Min<br>Example: 2,5,9,12 → Range=10" },
+            { grade: 9, category: "Statistics", front: "Grouped Data Mean", back: "x̄ = Σ(f × x) / Σf<br>f = frequency, x = midpoint<br>Example: Frequency table mean" },
+            { grade: 9, category: "Statistics", front: "Class Mark (Midpoint)", back: "x = (Lower limit + Upper limit) / 2<br>Example: 10-20 → x=15" },
+            { grade: 9, category: "Statistics", front: "Class Size", back: "Upper limit - Lower limit<br>Example: 10-20 → size=10" },
+            { grade: 9, category: "Probability", front: "Probability", back: "P(E) = (Favorable outcomes) / (Total outcomes)<br>Example: 1 coin flip heads → P=1/2" },
+            { grade: 9, category: "Probability", front: "Probability Range", back: "0 ≤ P(E) ≤ 1<br>Example: P can be 0, 0.5, or 1" },
+            { grade: 9, category: "Probability", front: "Certain Event", back: "P(E) = 1<br>Example: Sun rises tomorrow" },
+            { grade: 9, category: "Probability", front: "Impossible Event", back: "P(E) = 0<br>Example: Rolling 7 on 6-sided die" },
+            { grade: 9, category: "Probability", front: "Complementary Event", back: "P(E') = 1 - P(E)<br>Example: P(heads)=1/2 → P(tails)=1/2" },
+            { grade: 9, category: "Probability", front: "Sum of Probabilities", back: "P(E) + P(E') = 1<br>Example: 0.3 + 0.7 = 1" },
+            
+            // Surface Areas and Volumes
+            { grade: 9, category: "Geometry", front: "Total Surface Area of Cube", back: "TSA = 6a²<br>Example: a=3 → TSA=54" },
+            { grade: 9, category: "Geometry", front: "Lateral Surface Area of Cube", back: "LSA = 4a²<br>Example: a=5 → LSA=100" },
+            { grade: 9, category: "Geometry", front: "Volume of Cuboid", back: "V = l × w × h<br>Example: 2×3×4 → V=24" },
+            { grade: 9, category: "Geometry", front: "TSA of Cuboid", back: "TSA = 2(lw + lh + wh)<br>Example: 2×3×4 → TSA=52" },
+            { grade: 9, category: "Geometry", front: "LSA of Cuboid", back: "LSA = 2h(l + w)<br>Example: l=3,w=4,h=5 → LSA=70" },
+            { grade: 9, category: "Geometry", front: "TSA of Cylinder", back: "TSA = 2πr(r + h)<br>Example: r=3, h=5 → TSA≈150.8" },
+            { grade: 9, category: "Geometry", front: "CSA of Cylinder", back: "CSA = 2πrh<br>Example: r=2, h=5 → CSA≈62.8" },
+            { grade: 9, category: "Geometry", front: "Volume of Cone", back: "V = (1/3)πr²h<br>Example: r=3, h=4 → V≈37.7" },
+            { grade: 9, category: "Geometry", front: "CSA of Cone", back: "CSA = πrl<br>l = slant height<br>Example: r=3, l=5 → CSA≈47.1" },
+            { grade: 9, category: "Geometry", front: "TSA of Cone", back: "TSA = πr(l + r)<br>Example: r=3, l=5 → TSA≈75.4" },
+            { grade: 9, category: "Geometry", front: "Volume of Sphere", back: "V = (4/3)πr³<br>Example: r=3 → V≈113.1" },
+            { grade: 9, category: "Geometry", front: "Surface Area of Sphere", back: "SA = 4πr²<br>Example: r=5 → SA≈314.2" },
+            { grade: 9, category: "Geometry", front: "Volume of Hemisphere", back: "V = (2/3)πr³<br>Example: r=3 → V≈56.5" },
+            { grade: 9, category: "Geometry", front: "CSA of Hemisphere", back: "CSA = 2πr²<br>Example: r=4 → CSA≈100.5" },
+            { grade: 9, category: "Geometry", front: "TSA of Hemisphere", back: "TSA = 3πr²<br>Example: r=4 → TSA≈150.8" },
+            { grade: 9, category: "Algebra", front: "System of Equations (Substitution)", back: "Solve one equation for a variable,<br>substitute into other<br>Example: x+y=5, y=2x → x=5/3" },
+            { grade: 9, category: "Algebra", front: "System of Equations (Elimination)", back: "Add/subtract equations to<br>eliminate one variable<br>Example: 2x+y=7, x+y=5 → x=2" },
+
+            // Grade 10 (80+ formulas and facts)
+            // Trigonometry - Basic Ratios
+            { grade: 10, category: "Trigonometry", front: "Sine (SOH)", back: "sin θ = Opposite/Hypotenuse" },
+            { grade: 10, category: "Trigonometry", front: "Cosine (CAH)", back: "cos θ = Adjacent/Hypotenuse" },
+            { grade: 10, category: "Trigonometry", front: "Tangent (TOA)", back: "tan θ = Opposite/Adjacent" },
+            { grade: 10, category: "Trigonometry", front: "Cosecant", back: "csc θ = 1/sin θ = Hyp/Opp" },
+            { grade: 10, category: "Trigonometry", front: "Secant", back: "sec θ = 1/cos θ = Hyp/Adj" },
+            { grade: 10, category: "Trigonometry", front: "Cotangent", back: "cot θ = 1/tan θ = Adj/Opp" },
+            
+            // Trigonometric Identities
+            { grade: 10, category: "Trigonometry", front: "Pythagorean Identity", back: "sin²θ + cos²θ = 1" },
+            { grade: 10, category: "Trigonometry", front: "Pythagorean Identity (tan)", back: "1 + tan²θ = sec²θ" },
+            { grade: 10, category: "Trigonometry", front: "Pythagorean Identity (cot)", back: "1 + cot²θ = csc²θ" },
+            { grade: 10, category: "Trigonometry", front: "Tangent Identity", back: "tan θ = sin θ / cos θ" },
+            { grade: 10, category: "Trigonometry", front: "Cotangent Identity", back: "cot θ = cos θ / sin θ" },
+            { grade: 10, category: "Trigonometry", front: "Reciprocal Identity (sin-csc)", back: "sin θ = 1/csc θ" },
+            { grade: 10, category: "Trigonometry", front: "Reciprocal Identity (cos-sec)", back: "cos θ = 1/sec θ" },
+            { grade: 10, category: "Trigonometry", front: "Reciprocal Identity (tan-cot)", back: "tan θ = 1/cot θ" },
+            
+            // Special Angles
+            { grade: 10, category: "Trigonometry", front: "sin 0°", back: "0" },
+            { grade: 10, category: "Trigonometry", front: "sin 30°", back: "1/2" },
+            { grade: 10, category: "Trigonometry", front: "sin 45°", back: "1/√2 = √2/2" },
+            { grade: 10, category: "Trigonometry", front: "sin 60°", back: "√3/2<br>≈ 0.866" },
+            { grade: 10, category: "Trigonometry", front: "sin 90°", back: "1" },
+            { grade: 10, category: "Trigonometry", front: "cos 0°", back: "1" },
+            { grade: 10, category: "Trigonometry", front: "cos 30°", back: "√3/2<br>≈ 0.866" },
+            { grade: 10, category: "Trigonometry", front: "cos 45°", back: "1/√2 = √2/2<br>≈ 0.707" },
+            { grade: 10, category: "Trigonometry", front: "cos 60°", back: "1/2<br>= 0.5" },
+            { grade: 10, category: "Trigonometry", front: "cos 90°", back: "0" },
+            { grade: 10, category: "Trigonometry", front: "tan 0°", back: "0" },
+            { grade: 10, category: "Trigonometry", front: "tan 30°", back: "1/√3 = √3/3<br>≈ 0.577" },
+            { grade: 10, category: "Trigonometry", front: "tan 45°", back: "1" },
+            { grade: 10, category: "Trigonometry", front: "tan 60°", back: "√3<br>≈ 1.732" },
+            { grade: 10, category: "Trigonometry", front: "tan 90°", back: "undefined" },
+            
+            // Complementary Angles
+            { grade: 10, category: "Trigonometry", front: "sin(90° - θ)", back: "cos θ<br>Example: sin(60°) = cos(30°)" },
+            { grade: 10, category: "Trigonometry", front: "cos(90° - θ)", back: "sin θ<br>Example: cos(60°) = sin(30°)" },
+            { grade: 10, category: "Trigonometry", front: "tan(90° - θ)", back: "cot θ<br>Example: tan(60°) = cot(30°)" },
+            { grade: 10, category: "Trigonometry", front: "cot(90° - θ)", back: "tan θ<br>Example: cot(60°) = tan(30°)" },
+            { grade: 10, category: "Trigonometry", front: "sec(90° - θ)", back: "csc θ<br>Example: sec(60°) = csc(30°)" },
+            { grade: 10, category: "Trigonometry", front: "csc(90° - θ)", back: "sec θ<br>Example: csc(60°) = sec(30°)" },
+            
+            // Negative Angles
+            { grade: 10, category: "Trigonometry", front: "sin(-θ)", back: "-sin θ<br>Example: sin(-30°) = -1/2" },
+            { grade: 10, category: "Trigonometry", front: "cos(-θ)", back: "cos θ<br>Example: cos(-30°) = √3/2" },
+            { grade: 10, category: "Trigonometry", front: "tan(-θ)", back: "-tan θ<br>Example: tan(-45°) = -1" },
+            
+            // Angle Conversions
+            { grade: 10, category: "Trigonometry", front: "Degrees to Radians", back: "radians = degrees × (π/180)<br>Example: 90° = π/2 rad" },
+            { grade: 10, category: "Trigonometry", front: "Radians to Degrees", back: "degrees = radians × (180/π)<br>Example: π rad = 180°" },
+            { grade: 10, category: "Trigonometry", front: "180° in Radians", back: "π radians" },
+            { grade: 10, category: "Trigonometry", front: "90° in Radians", back: "π/2 radians" },
+            { grade: 10, category: "Trigonometry", front: "60° in Radians", back: "π/3 radians" },
+            { grade: 10, category: "Trigonometry", front: "45° in Radians", back: "π/4 radians" },
+            { grade: 10, category: "Trigonometry", front: "30° in Radians", back: "π/6 radians" },
+            
+            // Exponents & Logarithms
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Product)", back: "aᵐ × aⁿ = aᵐ⁺ⁿ<br>Example: 2³ × 2² = 2⁵ = 32" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Quotient)", back: "aᵐ / aⁿ = aᵐ⁻ⁿ<br>Example: 5⁴ / 5² = 5² = 25" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Power)", back: "(aᵐ)ⁿ = aᵐⁿ<br>Example: (3²)³ = 3⁶ = 729" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Zero)", back: "a⁰ = 1 (a ≠ 0)<br>Example: 10⁰ = 1" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Negative)", back: "a⁻ⁿ = 1/aⁿ<br>Example: 2⁻³ = 1/8" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Product Power)", back: "(ab)ⁿ = aⁿbⁿ<br>Example: (2×3)² = 4×9 = 36" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Quotient Power)", back: "(a/b)ⁿ = aⁿ/bⁿ<br>Example: (4/2)² = 16/4 = 4" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Fractional)", back: "a^(m/n) = ⁿ√(aᵐ)<br>Example: 8^(2/3) = ³√64 = 4" },
+            { grade: 10, category: "Algebra", front: "Logarithm Definition", back: "If aˣ = b, then log_a(b) = x<br>Example: 2³=8 → log₂(8)=3" },
+            { grade: 10, category: "Algebra", front: "Log to Exponential", back: "log_a(b) = x ⟺ aˣ = b<br>Example: log₁₀(100)=2 ⟺ 10²=100" },
+            { grade: 10, category: "Algebra", front: "Log Product Rule", back: "log(ab) = log a + log b<br>Example: log(20) = log(4)+log(5)" },
+            { grade: 10, category: "Algebra", front: "Log Quotient Rule", back: "log(a/b) = log a - log b<br>Example: log(10/2) = log(10)-log(2)" },
+            { grade: 10, category: "Algebra", front: "Log Power Rule", back: "log(aⁿ) = n log a<br>Example: log(10³) = 3 log(10)" },
+            { grade: 10, category: "Algebra", front: "Log of 1", back: "log_a(1) = 0<br>Example: log₁₀(1) = 0" },
+            { grade: 10, category: "Algebra", front: "Log of Base", back: "log_a(a) = 1<br>Example: log₁₀(10) = 1" },
+            { grade: 10, category: "Algebra", front: "Change of Base Formula", back: "log_a(b) = log(b)/log(a)<br>Example: log₂(8) = log(8)/log(2)" },
+            
+            // 3D Geometry
+            { grade: 10, category: "Geometry", front: "Volume of Sphere", back: "V = (4/3)πr³<br>Example: r=3 → V≈113.1" },
+            { grade: 10, category: "Geometry", front: "Surface Area of Sphere", back: "SA = 4πr²<br>Example: r=5 → SA≈314.2" },
+            { grade: 10, category: "Geometry", front: "Volume of Cone", back: "V = (1/3)πr²h<br>Example: r=3, h=4 → V≈37.7" },
+            { grade: 10, category: "Geometry", front: "CSA of Cone", back: "CSA = πrl<br>Example: r=3, l=5 → CSA≈47.1" },
+            { grade: 10, category: "Geometry", front: "TSA of Cone", back: "TSA = πr(l + r)<br>Example: r=3, l=5 → TSA≈75.4" },
+            { grade: 10, category: "Geometry", front: "Slant Height of Cone", back: "l = √(r² + h²)<br>Example: r=3, h=4 → l=5" },
+            { grade: 10, category: "Geometry", front: "Volume of Cylinder", back: "V = πr²h<br>Example: r=2, h=5 → V≈62.8" },
+            { grade: 10, category: "Geometry", front: "TSA of Cylinder", back: "TSA = 2πr(r + h)<br>Example: r=3, h=5 → TSA≈150.8" },
+            { grade: 10, category: "Geometry", front: "CSA of Cylinder", back: "CSA = 2πrh<br>Example: r=2, h=5 → CSA≈62.8" },
+            { grade: 10, category: "Geometry", front: "Volume of Pyramid", back: "V = (1/3) × Base Area × height<br>Example: Base=25, h=6 → V=50" },
+            { grade: 10, category: "Geometry", front: "Volume of Prism", back: "V = Base Area × height<br>Example: Base=20, h=7 → V=140" },
+            { grade: 10, category: "Geometry", front: "Frustum of Cone Volume", back: "V = (1/3)πh(r₁² + r₁r₂ + r₂²)<br>Example: h=3, r₁=4, r₂=2 → V≈88" },
+            { grade: 10, category: "Geometry", front: "Frustum of Cone CSA", back: "CSA = π(r₁ + r₂)l<br>Example: r₁=4, r₂=2, l=5 → CSA≈94.2" },
+            
+            // Circles - Advanced
+            { grade: 10, category: "Geometry", front: "Area of Sector", back: "A = (θ/360°) × πr²<br>θ in degrees<br>Example: θ=90°, r=6 → A=9π" },
+            { grade: 10, category: "Geometry", front: "Arc Length", back: "L = (θ/360°) × 2πr<br>θ in degrees<br>Example: θ=60°, r=9 → L=3π" },
+            { grade: 10, category: "Geometry", front: "Area of Segment", back: "A_segment = A_sector - A_triangle<br>Example: Subtract triangle area" },
+            { grade: 10, category: "Geometry", front: "Chord Length Formula", back: "chord = 2r sin(θ/2)<br>Example: r=5, θ=60° → chord=5" },
+            { grade: 10, category: "Geometry", front: "Tangent from External Point", back: "Length² = (distance to center)² - r²<br>Example: dist=5, r=3 → L=4" },
+            { grade: 10, category: "Geometry", front: "Two Tangents from Point", back: "Equal in length<br>Example: Both tangents = 4 cm" },
+            { grade: 10, category: "Geometry", front: "Tangent-Radius Angle", back: "Tangent ⊥ radius at point of contact<br>Example: Always 90°" },
+            { grade: 10, category: "Geometry", front: "Angle in Semicircle", back: "90° (right angle)<br>Example: Any triangle in semicircle" },
+            { grade: 10, category: "Geometry", front: "Inscribed Angle Theorem", back: "Inscribed angle = ½ central angle<br>Example: Central=80° → Inscribed=40°" },
+            { grade: 10, category: "Geometry", front: "Angles in Same Segment", back: "Equal<br>Example: Both angles subtend same arc" },
+            
+            // Quadratic Applications
+            { grade: 10, category: "Algebra", front: "Nature of Roots (Δ > 0)", back: "Two distinct real roots<br>Example: x²-5x+6=0, Δ=1" },
+            { grade: 10, category: "Algebra", front: "Nature of Roots (Δ = 0)", back: "One repeated real root<br>Example: x²-4x+4=0, Δ=0" },
+            { grade: 10, category: "Algebra", front: "Nature of Roots (Δ < 0)", back: "No real roots (complex)<br>Example: x²+x+1=0, Δ=-3" },
+            { grade: 10, category: "Algebra", front: "Discriminant Formula", back: "Δ = b² - 4ac<br>Example: x²+3x+2 → Δ=9-8=1" },
+            { grade: 10, category: "Algebra", front: "For Equal Roots", back: "b² - 4ac = 0<br>Example: x²+4x+4 → Δ=0" },
+            { grade: 10, category: "Algebra", front: "For Real Roots", back: "b² - 4ac ≥ 0<br>Example: Δ must be ≥ 0" },
+            
+            // Probability
+            { grade: 10, category: "Probability", front: "Probability Formula", back: "P(E) = n(E) / n(S)<br>Example: 1 ace in 52 cards → P=1/52" },
+            { grade: 10, category: "Probability", front: "Complement Rule", back: "P(not E) = 1 - P(E)<br>Example: P(not 6) = 1 - 1/6 = 5/6" },
+            { grade: 10, category: "Probability", front: "Addition Rule (Mutually Exclusive)", back: "P(A or B) = P(A) + P(B)<br>Example: P(2 or 4) = 1/6+1/6=1/3" },
+            { grade: 10, category: "Probability", front: "Addition Rule (General)", back: "P(A∪B) = P(A) + P(B) - P(A∩B)<br>Example: Cards: hearts or kings" },
+            { grade: 10, category: "Probability", front: "Multiplication Rule (Independent)", back: "P(A and B) = P(A) × P(B)<br>Example: Two coins: P(HH)=1/4" },
+            { grade: 10, category: "Probability", front: "Conditional Probability", back: "P(A|B) = P(A∩B) / P(B)<br>Example: P(ace|red card)" },
+            
+            // Statistics
+            { grade: 10, category: "Statistics", front: "Mean of Grouped Data", back: "x̄ = Σ(f×x) / Σf<br>Example: Frequency table average" },
+            { grade: 10, category: "Statistics", front: "Median of Grouped Data", back: "L + [(n/2 - cf)/f] × h<br>Example: L=lower boundary, cf=cumulative freq" },
+            { grade: 10, category: "Statistics", front: "Mode of Grouped Data", back: "L + [(f₁-f₀)/(2f₁-f₀-f₂)] × h<br>Example: Modal class calculation" },
+            { grade: 10, category: "Statistics", front: "Cumulative Frequency", back: "Sum of all previous frequencies<br>Example: 5,8,12,18..." },
+            { grade: 10, category: "Statistics", front: "Mean Deviation", back: "MD = Σ|x - x̄| / n<br>Example: Average distance from mean" },
+            { grade: 10, category: "Statistics", front: "Variance", back: "σ² = Σ(x - x̄)² / n<br>Example: Spread measure" },
+            { grade: 10, category: "Statistics", front: "Standard Deviation", back: "σ = √[Σ(x - x̄)² / n]<br>Example: If σ²=16 → σ=4" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Zero)", back: "a^0 = 1 (a ≠ 0)<br>Example: 5⁰ = 1" },
+            { grade: 10, category: "Algebra", front: "Laws of Exponents (Negative)", back: "a^(-n) = 1/a^n<br>Example: 2⁻² = 1/4" },
+            { grade: 10, category: "Geometry", front: "Volume of Sphere", back: "V = (4/3)πr³<br>Example: r=6 → V≈904.8" },
+            { grade: 10, category: "Geometry", front: "Surface Area of Sphere", back: "SA = 4πr²<br>Example: r=7 → SA≈615.8" },
+            { grade: 10, category: "Geometry", front: "Volume of Cone", back: "V = (1/3)πr²h<br>Example: r=4, h=9 → V≈150.8" },
+            { grade: 10, category: "Geometry", front: "Volume of Pyramid", back: "V = (1/3) × Base Area × height<br>Example: Base=36, h=8 → V=96" },
+
+            // Grade 11 (80+ formulas and facts)
+            // Trigonometry - Laws and Advanced
+            { grade: 11, category: "Trigonometry", front: "Sine Law", back: "a/sin A = b/sin B = c/sin C" },
+            { grade: 11, category: "Trigonometry", front: "Cosine Law", back: "c² = a² + b² - 2ab cos C" },
+            { grade: 11, category: "Trigonometry", front: "Cosine Law (for angle)", back: "cos C = (a² + b² - c²) / 2ab" },
+            { grade: 11, category: "Trigonometry", front: "Area of Triangle (SAS)", back: "A = ½ab sin C" },
+            { grade: 11, category: "Trigonometry", front: "Area of Triangle (SSS)", back: "A = √[s(s-a)(s-b)(s-c)]<br>Heron's formula" },
+            
+            // Double Angle Formulas
+            { grade: 11, category: "Trigonometry", front: "Double Angle (Sine)", back: "sin 2θ = 2 sin θ cos θ<br>Example: sin 60° = 2sin30°cos30°" },
+            { grade: 11, category: "Trigonometry", front: "Double Angle (Cosine) - Form 1", back: "cos 2θ = cos²θ - sin²θ<br>Example: cos 60° using θ=30°" },
+            { grade: 11, category: "Trigonometry", front: "Double Angle (Cosine) - Form 2", back: "cos 2θ = 2cos²θ - 1<br>Example: cos 90° = 2cos²45° - 1" },
+            { grade: 11, category: "Trigonometry", front: "Double Angle (Cosine) - Form 3", back: "cos 2θ = 1 - 2sin²θ<br>Example: cos 60° = 1 - 2sin²30°" },
+            { grade: 11, category: "Trigonometry", front: "Double Angle (Tangent)", back: "tan 2θ = 2tan θ / (1 - tan²θ)<br>Example: tan 90° using θ=45°" },
+            
+            // Half Angle Formulas
+            { grade: 11, category: "Trigonometry", front: "Half Angle (Sine)", back: "sin²(θ/2) = (1 - cos θ) / 2<br>Example: sin²15° using θ=30°" },
+            { grade: 11, category: "Trigonometry", front: "Half Angle (Cosine)", back: "cos²(θ/2) = (1 + cos θ) / 2<br>Example: cos²15° using θ=30°" },
+            { grade: 11, category: "Trigonometry", front: "Half Angle (Tangent)", back: "tan(θ/2) = (1 - cos θ) / sin θ<br>Example: tan 15° using θ=30°" },
+            
+            // Sum and Difference Formulas
+            { grade: 11, category: "Trigonometry", front: "Sum Formula (Sine)", back: "sin(A + B) = sin A cos B + cos A sin B<br>Example: sin 75° = sin(45°+30°)" },
+            { grade: 11, category: "Trigonometry", front: "Difference Formula (Sine)", back: "sin(A - B) = sin A cos B - cos A sin B<br>Example: sin 15° = sin(45°-30°)" },
+            { grade: 11, category: "Trigonometry", front: "Sum Formula (Cosine)", back: "cos(A + B) = cos A cos B - sin A sin B<br>Example: cos 75° = cos(45°+30°)" },
+            { grade: 11, category: "Trigonometry", front: "Difference Formula (Cosine)", back: "cos(A - B) = cos A cos B + sin A sin B<br>Example: cos 15° = cos(45°-30°)" },
+            { grade: 11, category: "Trigonometry", front: "Sum Formula (Tangent)", back: "tan(A + B) = (tan A + tan B)/(1 - tan A tan B)<br>Example: tan 75° using 45°+30°" },
+            { grade: 11, category: "Trigonometry", front: "Difference Formula (Tangent)", back: "tan(A - B) = (tan A - tan B)/(1 + tan A tan B)<br>Example: tan 15° using 45°-30°" },
+            
+            // Product to Sum Formulas
+            { grade: 11, category: "Trigonometry", front: "Product to Sum (sin sin)", back: "sin A sin B = ½[cos(A-B) - cos(A+B)]<br>Example: sin 30° sin 60°" },
+            { grade: 11, category: "Trigonometry", front: "Product to Sum (cos cos)", back: "cos A cos B = ½[cos(A-B) + cos(A+B)]<br>Example: cos 45° cos 45°" },
+            { grade: 11, category: "Trigonometry", front: "Product to Sum (sin cos)", back: "sin A cos B = ½[sin(A+B) + sin(A-B)]<br>Example: sin 60° cos 30°" },
+            
+            // Sum to Product Formulas
+            { grade: 11, category: "Trigonometry", front: "Sum to Product (sin + sin)", back: "sin A + sin B = 2sin[(A+B)/2]cos[(A-B)/2]<br>Example: sin 60° + sin 30°" },
+            { grade: 11, category: "Trigonometry", front: "Sum to Product (sin - sin)", back: "sin A - sin B = 2cos[(A+B)/2]sin[(A-B)/2]<br>Example: sin 60° - sin 30°" },
+            { grade: 11, category: "Trigonometry", front: "Sum to Product (cos + cos)", back: "cos A + cos B = 2cos[(A+B)/2]cos[(A-B)/2]<br>Example: cos 60° + cos 30°" },
+            { grade: 11, category: "Trigonometry", front: "Sum to Product (cos - cos)", back: "cos A - cos B = -2sin[(A+B)/2]sin[(A-B)/2]<br>Example: cos 30° - cos 60°" },
+            
+            // Logarithms - Advanced
+            { grade: 11, category: "Algebra", front: "Logarithm Definition", back: "If aˣ = b, then log_a(b) = x<br>Example: 2⁵=32 → log₂32=5" },
+            { grade: 11, category: "Algebra", front: "Log Product Rule", back: "log(ab) = log a + log b<br>Example: log(100) = log10+log10" },
+            { grade: 11, category: "Algebra", front: "Log Quotient Rule", back: "log(a/b) = log a - log b<br>Example: log(10/2) = log10-log2" },
+            { grade: 11, category: "Algebra", front: "Log Power Rule", back: "log(aⁿ) = n log a<br>Example: log(10³) = 3log10 = 3" },
+            { grade: 11, category: "Algebra", front: "Change of Base Formula", back: "log_a(b) = log_c(b) / log_c(a)<br>Example: log₂8 = log8/log2" },
+            { grade: 11, category: "Algebra", front: "Natural Log", back: "ln x = log_e(x), e ≈ 2.718<br>Example: ln(e²) = 2" },
+            { grade: 11, category: "Algebra", front: "ln(e)", back: "1<br>Example: log base e of e equals 1" },
+            { grade: 11, category: "Algebra", front: "ln(1)", back: "0<br>Example: Any log of 1 is 0" },
+            { grade: 11, category: "Algebra", front: "e^(ln x)", back: "x<br>Example: e^(ln 5) = 5" },
+            { grade: 11, category: "Algebra", front: "ln(e^x)", back: "x<br>Example: ln(e³) = 3" },
+            { grade: 11, category: "Algebra", front: "Log Base 10 Notation", back: "log x = log₁₀(x)<br>Example: log 100 = 2" },
+            
+            // Sequences and Series
+            { grade: 11, category: "Algebra", front: "Arithmetic Sequence", back: "aₙ = a₁ + (n - 1)d<br>Example: 2,5,8,11... a₅=14" },
+            { grade: 11, category: "Algebra", front: "Arithmetic Series Sum", back: "Sₙ = (n/2)[2a + (n-1)d]<br>Example: Sum of 2+4+6+...+20 = 110" },
+            { grade: 11, category: "Algebra", front: "Arithmetic Series Sum (alternate)", back: "Sₙ = (n/2)(a + l)<br>Example: (10/2)(2+20) = 110" },
+            { grade: 11, category: "Algebra", front: "Geometric Sequence", back: "aₙ = a₁ × r^(n-1)<br>Example: 3,6,12... a₄=24" },
+            { grade: 11, category: "Algebra", front: "Geometric Series Sum", back: "Sₙ = a(1 - rⁿ)/(1 - r), r ≠ 1<br>Example: 2+6+18+54 = 80" },
+            { grade: 11, category: "Algebra", front: "Geometric Series Sum (alternate)", back: "Sₙ = a(rⁿ - 1)/(r - 1), r ≠ 1<br>Example: Same result, different form" },
+            { grade: 11, category: "Algebra", front: "Infinite Geometric Series", back: "S = a/(1 - r), |r| < 1<br>Example: 1+1/2+1/4+... = 2" },
+            { grade: 11, category: "Algebra", front: "Harmonic Mean", back: "H.M. = n / [Σ(1/xᵢ)]<br>Example: HM of 2,4 → 2/(1/2+1/4)=8/3" },
+            { grade: 11, category: "Algebra", front: "Relation: A.M., G.M., H.M.", back: "A.M. ≥ G.M. ≥ H.M.<br>Example: For 4,9 → 6.5≥6≥5.5" },
+            { grade: 11, category: "Algebra", front: "Arithmetic Mean of 2 numbers", back: "A.M. = (a + b) / 2<br>Example: (4+8)/2 = 6" },
+            { grade: 11, category: "Algebra", front: "Geometric Mean of 2 numbers", back: "G.M. = √(ab)<br>Example: √(4×9) = 6" },
+            { grade: 11, category: "Algebra", front: "Harmonic Mean of 2 numbers", back: "H.M. = 2ab / (a + b)<br>Example: 2×4×6/(4+6) = 4.8" },
+            
+            // Permutations and Combinations
+            { grade: 11, category: "Probability", front: "Factorial", back: "n! = n × (n-1) × ... × 2 × 1<br>Example: 5! = 120" },
+            { grade: 11, category: "Probability", front: "0! equals", back: "1<br>Example: By definition" },
+            { grade: 11, category: "Probability", front: "Permutation Formula", back: "P(n, r) = n! / (n - r)!<br>Example: P(5,2) = 20" },
+            { grade: 11, category: "Probability", front: "Permutation (all n)", back: "P(n, n) = n!<br>Example: P(3,3) = 6" },
+            { grade: 11, category: "Probability", front: "Combination Formula", back: "C(n, r) = n! / [r!(n - r)!]<br>Example: C(5,2) = 10" },
+            { grade: 11, category: "Probability", front: "Combination Notation", back: "C(n,r) = ⁿCᵣ = (n choose r)<br>Example: C(4,2) = ⁴C₂ = 6" },
+            { grade: 11, category: "Probability", front: "Permutation vs Combination", back: "Permutation: order matters<br>Combination: order doesn't matter<br>Example: ABC vs {A,B,C}" },
+            { grade: 11, category: "Probability", front: "C(n, 0)", back: "1<br>Example: C(5,0) = 1" },
+            { grade: 11, category: "Probability", front: "C(n, n)", back: "1<br>Example: C(5,5) = 1" },
+            { grade: 11, category: "Probability", front: "C(n, r) = C(n, n-r)", back: "Symmetry property<br>Example: C(5,2) = C(5,3) = 10" },
+            { grade: 11, category: "Probability", front: "Permutation with Repetition", back: "n! / (n₁! × n₂! × ... × nₖ!)<br>Example: MISSISSIPPI arrangements" },
+            { grade: 11, category: "Probability", front: "Circular Permutation", back: "(n - 1)!<br>Example: 5 people around table = 4! = 24" },
+            
+            // Binomial Theorem
+            { grade: 11, category: "Algebra", front: "Binomial Theorem", back: "(a + b)ⁿ = Σ[C(n,r) × aⁿ⁻ʳ × bʳ]<br>Example: (x+1)³ expansion" },
+            { grade: 11, category: "Algebra", front: "General Term (Binomial)", back: "Tᵣ₊₁ = C(n,r) × aⁿ⁻ʳ × bʳ<br>Example: 4th term → T₄ with r=3" },
+            { grade: 11, category: "Algebra", front: "Middle Term (n even)", back: "T_(n/2 + 1)<br>Example: n=6 → T₄ is middle" },
+            { grade: 11, category: "Algebra", front: "Middle Terms (n odd)", back: "T_((n+1)/2) and T_((n+3)/2)<br>Example: n=5 → T₃ and T₄" },
+            { grade: 11, category: "Algebra", front: "Sum of Binomial Coefficients", back: "Σ C(n,r) = 2ⁿ<br>Example: n=3 → 1+3+3+1=8" },
+            
+            // Complex Numbers
+            { grade: 11, category: "Algebra", front: "Imaginary Unit", back: "i = √(-1), i² = -1<br>Example: √(-4) = 2i" },
+            { grade: 11, category: "Algebra", front: "Complex Number", back: "z = a + bi<br>a = real, b = imaginary<br>Example: 3 + 4i" },
+            { grade: 11, category: "Algebra", front: "Complex Conjugate", back: "If z = a + bi, then z̄ = a - bi<br>Example: 3+4i → 3-4i" },
+            { grade: 11, category: "Algebra", front: "Modulus of Complex Number", back: "|z| = √(a² + b²)<br>Example: |3+4i| = 5" },
+            { grade: 11, category: "Algebra", front: "Argument of Complex Number", back: "arg(z) = tan⁻¹(b/a)<br>Example: arg(1+i) = 45°" },
+            { grade: 11, category: "Algebra", front: "Polar Form", back: "z = r(cos θ + i sin θ)<br>r = |z|, θ = arg(z)<br>Example: 1+i in polar" },
+            { grade: 11, category: "Algebra", front: "Euler's Formula", back: "e^(iθ) = cos θ + i sin θ<br>Example: e^(iπ) = -1" },
+            { grade: 11, category: "Algebra", front: "De Moivre's Theorem", back: "(cos θ + i sin θ)ⁿ = cos(nθ) + i sin(nθ)<br>Example: (cos30°+isin30°)²" },
+            { grade: 11, category: "Algebra", front: "z × z̄", back: "|z|² = a² + b²<br>Example: (3+4i)(3-4i) = 25" },
+            { grade: 11, category: "Algebra", front: "i³", back: "-i<br>Example: i² × i = -1 × i = -i" },
+            { grade: 11, category: "Algebra", front: "i⁴", back: "1<br>Example: i² × i² = (-1)(-1) = 1" },
+            
+            // Matrices (Introduction)
+            { grade: 11, category: "Algebra", front: "Matrix Order", back: "m × n<br>m rows, n columns<br>Example: 2×3 matrix" },
+            { grade: 11, category: "Algebra", front: "Square Matrix", back: "m = n (equal rows and columns)<br>Example: 3×3 matrix" },
+            { grade: 11, category: "Algebra", front: "Identity Matrix", back: "I = diagonal matrix with 1s<br>Example: [1 0; 0 1]" },
+            { grade: 11, category: "Algebra", front: "Zero Matrix", back: "All elements are 0<br>Example: [0 0; 0 0]" },
+            { grade: 11, category: "Algebra", front: "Transpose", back: "Aᵀ: rows become columns<br>Example: [1 2; 3 4]ᵀ = [1 3; 2 4]" },
+            { grade: 11, category: "Algebra", front: "Determinant (2×2)", back: "|A| = ad - bc<br>for [a b; c d]<br>Example: |[1 2; 3 4]| = -2" },
+            { grade: 11, category: "Algebra", front: "Matrix Addition", back: "Add corresponding elements<br>(same order required)<br>Example: [1 2]+[3 4]=[4 6]" },
+            { grade: 11, category: "Algebra", front: "Scalar Multiplication", back: "Multiply each element by scalar<br>Example: 2[1 2]=[2 4]" },
+            
+            // Limits (Introduction)
+            { grade: 11, category: "Calculus", front: "Limit Definition", back: "lim(x→a) f(x) = L<br>Example: lim(x→2) x² = 4" },
+            { grade: 11, category: "Calculus", front: "Limit of Constant", back: "lim(x→a) c = c<br>Example: lim(x→5) 7 = 7" },
+            { grade: 11, category: "Calculus", front: "Limit of x", back: "lim(x→a) x = a<br>Example: lim(x→3) x = 3" },
+            { grade: 11, category: "Calculus", front: "Limit Sum Rule", back: "lim[f(x) + g(x)] = lim f(x) + lim g(x)<br>Example: lim(x²+3x)" },
+            { grade: 11, category: "Calculus", front: "Limit Product Rule", back: "lim[f(x)g(x)] = [lim f(x)][lim g(x)]<br>Example: lim(x·x²)" },
+            { grade: 11, category: "Calculus", front: "Limit Quotient Rule", back: "lim[f(x)/g(x)] = [lim f(x)] / [lim g(x)]<br>Example: lim(x²/x)" },
+            { grade: 11, category: "Calculus", front: "lim(x→0) (sin x / x)", back: "1<br>Example: Important limit for derivatives" },
+            { grade: 11, category: "Calculus", front: "lim(x→0) [(1-cos x) / x]", back: "0<br>Example: Another important limit" },
+            { grade: 11, category: "Algebra", front: "Natural Log", back: "ln x = log_e(x), e ≈ 2.718<br>Example: ln(e) = 1" },
+            { grade: 11, category: "Algebra", front: "Arithmetic Sequence", back: "a_n = a₁ + (n-1)d<br>Example: 3,7,11... a₅=19" },
+            { grade: 11, category: "Algebra", front: "Arithmetic Series Sum", back: "S_n = n/2(a₁ + a_n)<br>Example: 1+2+...+10 = 55" },
+            { grade: 11, category: "Algebra", front: "Geometric Sequence", back: "a_n = a₁ × r^(n-1)<br>Example: 2,4,8... a₄=16" },
+            { grade: 11, category: "Algebra", front: "Geometric Series Sum", back: "S_n = a₁(1-r^n)/(1-r)<br>Example: 1+2+4+8 = 15" },
+            { grade: 11, category: "Algebra", front: "Infinite Geometric Series", back: "S = a₁/(1-r) where |r| < 1<br>Example: 1+1/2+1/4+... = 2" },
+
+            // Grade 12 (80+ formulas and facts)
+            // Derivatives - Basic Rules
+            { grade: 12, category: "Calculus", front: "Power Rule (Derivative)", back: "d/dx(xⁿ) = nxⁿ⁻¹<br>Example: d/dx(x³) = 3x²" },
+            { grade: 12, category: "Calculus", front: "Constant Rule", back: "d/dx(c) = 0<br>Example: d/dx(5) = 0" },
+            { grade: 12, category: "Calculus", front: "Constant Multiple Rule", back: "d/dx(cf) = c·f'<br>Example: d/dx(3x²) = 6x" },
+            { grade: 12, category: "Calculus", front: "Sum Rule", back: "d/dx(f + g) = f' + g'<br>Example: d/dx(x²+x³) = 2x+3x²" },
+            { grade: 12, category: "Calculus", front: "Difference Rule", back: "d/dx(f - g) = f' - g'<br>Example: d/dx(x³-x²) = 3x²-2x" },
+            { grade: 12, category: "Calculus", front: "Product Rule", back: "d/dx(uv) = u'v + uv'<br>Example: d/dx(x·eˣ) = eˣ+xeˣ" },
+            { grade: 12, category: "Calculus", front: "Quotient Rule", back: "d/dx(u/v) = (u'v - uv')/v²<br>Example: d/dx(x/eˣ) = (eˣ-xeˣ)/e²ˣ" },
+            { grade: 12, category: "Calculus", front: "Chain Rule", back: "d/dx[f(g(x))] = f'(g(x))·g'(x)<br>Example: d/dx(sin 2x) = 2cos 2x" },
+            
+            // Derivatives - Trigonometric
+            { grade: 12, category: "Calculus", front: "Derivative of sin x", back: "d/dx(sin x) = cos x<br>Example: At x=0, slope is 1" },
+            { grade: 12, category: "Calculus", front: "Derivative of cos x", back: "d/dx(cos x) = -sin x<br>Example: At x=0, slope is 0" },
+            { grade: 12, category: "Calculus", front: "Derivative of tan x", back: "d/dx(tan x) = sec²x<br>Example: At x=0, slope is 1" },
+            { grade: 12, category: "Calculus", front: "Derivative of cot x", back: "d/dx(cot x) = -csc²x<br>Example: d/dx(cot 2x) = -2csc²2x" },
+            { grade: 12, category: "Calculus", front: "Derivative of sec x", back: "d/dx(sec x) = sec x tan x<br>Example: At x=π/4, slope is √2" },
+            { grade: 12, category: "Calculus", front: "Derivative of csc x", back: "d/dx(csc x) = -csc x cot x<br>Example: d/dx(csc 3x) = -3csc 3x cot 3x" },
+            
+            // Derivatives - Inverse Trig
+            { grade: 12, category: "Calculus", front: "Derivative of sin⁻¹x", back: "d/dx(sin⁻¹x) = 1/√(1-x²)<br>Example: At x=0, slope is 1" },
+            { grade: 12, category: "Calculus", front: "Derivative of cos⁻¹x", back: "d/dx(cos⁻¹x) = -1/√(1-x²)<br>Example: At x=0, slope is -1" },
+            { grade: 12, category: "Calculus", front: "Derivative of tan⁻¹x", back: "d/dx(tan⁻¹x) = 1/(1+x²)<br>Example: At x=0, slope is 1" },
+            
+            // Derivatives - Exponential & Logarithmic
+            { grade: 12, category: "Calculus", front: "Derivative of eˣ", back: "d/dx(eˣ) = eˣ<br>Example: Slope equals value at any point" },
+            { grade: 12, category: "Calculus", front: "Derivative of aˣ", back: "d/dx(aˣ) = aˣ ln a<br>Example: d/dx(2ˣ) = 2ˣ ln 2" },
+            { grade: 12, category: "Calculus", front: "Derivative of ln x", back: "d/dx(ln x) = 1/x<br>Example: At x=e, slope is 1/e" },
+            { grade: 12, category: "Calculus", front: "Derivative of log_a x", back: "d/dx(log_a x) = 1/(x ln a)<br>Example: d/dx(log₂ x) = 1/(x ln 2)" },
+            
+            // Integrals - Basic Rules
+            { grade: 12, category: "Calculus", front: "Power Rule (Integral)", back: "∫xⁿ dx = xⁿ⁺¹/(n+1) + C, n≠-1<br>Example: ∫x² dx = x³/3 + C" },
+            { grade: 12, category: "Calculus", front: "Constant Rule (Integral)", back: "∫c dx = cx + C<br>Example: ∫5 dx = 5x + C" },
+            { grade: 12, category: "Calculus", front: "Constant Multiple (Integral)", back: "∫cf(x) dx = c∫f(x) dx<br>Example: ∫3x² dx = 3(x³/3) + C" },
+            { grade: 12, category: "Calculus", front: "Sum Rule (Integral)", back: "∫[f(x) + g(x)] dx = ∫f(x)dx + ∫g(x)dx<br>Example: ∫(x+x²) dx" },
+            
+            // Integrals - Common Functions
+            { grade: 12, category: "Calculus", front: "Integral of 1/x", back: "∫(1/x) dx = ln|x| + C<br>Example: ∫(1/x) dx from 1 to e = 1" },
+            { grade: 12, category: "Calculus", front: "Integral of eˣ", back: "∫eˣ dx = eˣ + C<br>Example: ∫eˣ dx from 0 to 1 = e-1" },
+            { grade: 12, category: "Calculus", front: "Integral of aˣ", back: "∫aˣ dx = aˣ/ln a + C<br>Example: ∫2ˣ dx = 2ˣ/ln 2 + C" },
+            { grade: 12, category: "Calculus", front: "Integral of sin x", back: "∫sin x dx = -cos x + C<br>Example: ∫sin x dx from 0 to π = 2" },
+            { grade: 12, category: "Calculus", front: "Integral of cos x", back: "∫cos x dx = sin x + C<br>Example: ∫cos x dx from 0 to π/2 = 1" },
+            { grade: 12, category: "Calculus", front: "Integral of sec²x", back: "∫sec²x dx = tan x + C<br>Example: ∫sec²x dx from 0 to π/4 = 1" },
+            { grade: 12, category: "Calculus", front: "Integral of csc²x", back: "∫csc²x dx = -cot x + C<br>Example: Derivative of -cot x checks" },
+            { grade: 12, category: "Calculus", front: "Integral of sec x tan x", back: "∫sec x tan x dx = sec x + C<br>Example: Derivative of sec x checks" },
+            { grade: 12, category: "Calculus", front: "Integral of csc x cot x", back: "∫csc x cot x dx = -csc x + C<br>Example: Derivative of -csc x checks" },
+            { grade: 12, category: "Calculus", front: "Integral of tan x", back: "∫tan x dx = -ln|cos x| + C<br>Example: Or ln|sec x| + C" },
+            { grade: 12, category: "Calculus", front: "Integral of cot x", back: "∫cot x dx = ln|sin x| + C<br>Example: ∫cot x dx from π/4 to π/2" },
+            { grade: 12, category: "Calculus", front: "Integral of 1/(1+x²)", back: "∫1/(1+x²) dx = tan⁻¹x + C<br>Example: ∫dx/(1+x²) from 0 to 1 = π/4" },
+            { grade: 12, category: "Calculus", front: "Integral of 1/√(1-x²)", back: "∫1/√(1-x²) dx = sin⁻¹x + C<br>Example: ∫dx/√(1-x²) from 0 to 1/2 = π/6" },
+            
+            // Definite Integrals
+            { grade: 12, category: "Calculus", front: "Fundamental Theorem of Calculus", back: "∫[a to b] f(x)dx = F(b) - F(a)<br>Example: ∫[0 to 1] x² dx = 1/3" },
+            { grade: 12, category: "Calculus", front: "Area Under Curve", back: "A = ∫[a to b] f(x) dx<br>Example: Area under y=x from 0 to 2 is 2" },
+            { grade: 12, category: "Calculus", front: "Area Between Curves", back: "A = ∫[a to b] [f(x) - g(x)] dx<br>Example: Between y=x² and y=x" },
+            { grade: 12, category: "Calculus", front: "Properties: ∫[a to a]", back: "∫[a to a] f(x)dx = 0<br>Example: ∫[2 to 2] x² dx = 0" },
+            { grade: 12, category: "Calculus", front: "Properties: Reversing Limits", back: "∫[a to b] f(x)dx = -∫[b to a] f(x)dx<br>Example: ∫[0 to 1] x dx = -∫[1 to 0] x dx" },
+            { grade: 12, category: "Calculus", front: "Properties: Splitting Interval", back: "∫[a to c] = ∫[a to b] + ∫[b to c]<br>Example: ∫[0 to 2] = ∫[0 to 1] + ∫[1 to 2]" },
+            
+            // Applications of Derivatives
+            { grade: 12, category: "Calculus", front: "Slope of Tangent Line", back: "m = f'(a) at x = a<br>Example: For y=x², slope at x=2 is 4" },
+            { grade: 12, category: "Calculus", front: "Equation of Tangent Line", back: "y - y₁ = f'(a)(x - a)<br>Example: Tangent to y=x² at (1,1)" },
+            { grade: 12, category: "Calculus", front: "Critical Points", back: "Where f'(x) = 0 or undefined<br>Example: y=x³-3x has critical points at x=±1" },
+            { grade: 12, category: "Calculus", front: "First Derivative Test", back: "f'(x) changes sign → local max/min<br>Example: + to - = max, - to + = min" },
+            { grade: 12, category: "Calculus", front: "Second Derivative Test", back: "f''(x) > 0 → min, f''(x) < 0 → max<br>Example: y=x² at x=0 has min (f''=2)" },
+            { grade: 12, category: "Calculus", front: "Increasing Function", back: "f'(x) > 0<br>Example: y=x² increases when x>0" },
+            { grade: 12, category: "Calculus", front: "Decreasing Function", back: "f'(x) < 0<br>Example: y=x² decreases when x<0" },
+            { grade: 12, category: "Calculus", front: "Concave Up", back: "f''(x) > 0<br>Example: y=x² is concave up everywhere" },
+            { grade: 12, category: "Calculus", front: "Concave Down", back: "f''(x) < 0<br>Example: y=-x² is concave down" },
+            { grade: 12, category: "Calculus", front: "Inflection Point", back: "f''(x) changes sign<br>Example: y=x³ at x=0" },
+            
+            // L'Hôpital's Rule
+            { grade: 12, category: "Calculus", front: "L'Hôpital's Rule", back: "lim[f(x)/g(x)] = lim[f'(x)/g'(x)]<br>for 0/0 or ∞/∞<br>Example: lim(x→0) sin x/x = 1" },
+            { grade: 12, category: "Calculus", front: "Indeterminate Forms", back: "0/0, ∞/∞, 0·∞, ∞-∞, 0⁰, 1^∞, ∞⁰<br>Example: lim(x→0) x·ln x is 0·∞" },
+            
+            // Vectors
+            { grade: 12, category: "Vectors", front: "Vector Magnitude (2D)", back: "|v| = √(x² + y²)<br>Example: |(3,4)| = 5" },
+            { grade: 12, category: "Vectors", front: "Vector Magnitude (3D)", back: "|v| = √(x² + y² + z²)<br>Example: |(2,2,1)| = 3" },
+            { grade: 12, category: "Vectors", front: "Unit Vector", back: "û = v/|v|<br>Example: (3,4) → (3/5, 4/5)" },
+            { grade: 12, category: "Vectors", front: "Dot Product", back: "a·b = |a||b|cos θ<br>Example: (1,0)·(1,1) = 1" },
+            { grade: 12, category: "Vectors", front: "Dot Product (Components)", back: "a·b = a₁b₁ + a₂b₂ + a₃b₃<br>Example: (1,2,3)·(4,5,6) = 32" },
+            { grade: 12, category: "Vectors", front: "Cross Product Magnitude", back: "|a×b| = |a||b|sin θ<br>Example: Area of parallelogram" },
+            { grade: 12, category: "Vectors", front: "Cross Product (3D)", back: "a×b = (a₂b₃-a₃b₂, a₃b₁-a₁b₃, a₁b₂-a₂b₁)<br>Example: (1,0,0)×(0,1,0)=(0,0,1)" },
+            { grade: 12, category: "Vectors", front: "Angle Between Vectors", back: "cos θ = (a·b)/(|a||b|)<br>Example: Angle between (1,0) and (1,1) is 45°" },
+            { grade: 12, category: "Vectors", front: "Perpendicular Vectors", back: "a·b = 0<br>Example: (1,0)·(0,1) = 0" },
+            { grade: 12, category: "Vectors", front: "Parallel Vectors", back: "a×b = 0 or a = kb<br>Example: (2,4) = 2(1,2)" },
+            { grade: 12, category: "Vectors", front: "Scalar Projection", back: "comp_b a = (a·b)/|b|<br>Example: Shadow of a onto b" },
+            { grade: 12, category: "Vectors", front: "Vector Projection", back: "proj_b a = [(a·b)/|b|²]b<br>Example: Component of a along b" },
+            
+            // Probability & Statistics
+            { grade: 12, category: "Probability", front: "Permutation Formula", back: "P(n,r) = n!/(n-r)!<br>Example: P(5,2) = 20" },
+            { grade: 12, category: "Probability", front: "Combination Formula", back: "C(n,r) = n!/[r!(n-r)!]<br>Example: C(5,2) = 10" },
+            { grade: 12, category: "Probability", front: "Binomial Probability", back: "P(X=k) = C(n,k)p^k(1-p)^(n-k)<br>Example: 3 heads in 5 coin flips" },
+            { grade: 12, category: "Probability", front: "Binomial Mean", back: "μ = np<br>Example: 100 flips, p=0.5 → μ=50" },
+            { grade: 12, category: "Probability", front: "Binomial Variance", back: "σ² = np(1-p)<br>Example: 100 flips → σ²=25" },
+            { grade: 12, category: "Probability", front: "Binomial Std Deviation", back: "σ = √[np(1-p)]<br>Example: 100 flips → σ=5" },
+            { grade: 12, category: "Statistics", front: "Standard Deviation", back: "σ = √[Σ(x-μ)²/N]<br>Example: Spread of data from mean" },
+            { grade: 12, category: "Statistics", front: "Variance", back: "σ² = Σ(x-μ)²/N<br>Example: For {1,2,3}, variance calculation" },
+            { grade: 12, category: "Statistics", front: "Z-Score", back: "z = (x - μ)/σ<br>Example: x=70, μ=60, σ=10 → z=1" },
+            { grade: 12, category: "Statistics", front: "Expected Value", back: "E(X) = Σ[x·P(x)]<br>Example: Weighted average of outcomes" },
+            { grade: 12, category: "Statistics", front: "Variance (Probability)", back: "Var(X) = E(X²) - [E(X)]²<br>Example: For discrete random variable" },
+            
+            // Matrices - Advanced
+            { grade: 12, category: "Algebra", front: "Determinant (3×3)", back: "Use cofactor expansion<br>or Sarrus rule<br>Example: Expand along first row" },
+            { grade: 12, category: "Algebra", front: "Matrix Multiplication", back: "(AB)ᵢⱼ = Σ(aᵢₖ × bₖⱼ)<br>Example: 2×3 times 3×2 gives 2×2" },
+            { grade: 12, category: "Algebra", front: "Identity Matrix Property", back: "AI = IA = A<br>Example: [1 2;3 4]·I = [1 2;3 4]" },
+            { grade: 12, category: "Algebra", front: "Inverse Matrix (2×2)", back: "A⁻¹ = (1/det A)[d -b; -c a]<br>Example: For [a b;c d]" },
+            { grade: 12, category: "Algebra", front: "Matrix Inverse Property", back: "AA⁻¹ = A⁻¹A = I<br>Example: Matrix times inverse = identity" },
+            { grade: 12, category: "Algebra", front: "Determinant of Inverse", back: "det(A⁻¹) = 1/det(A)<br>Example: det(A)=2 → det(A⁻¹)=1/2" },
+            { grade: 12, category: "Algebra", front: "Cramer's Rule (2×2)", back: "x = det(Aₓ)/det(A), y = det(Aᵧ)/det(A)<br>Example: Solving linear systems" },
+            
+            // Differential Equations (Introduction)
+            { grade: 12, category: "Calculus", front: "Differential Equation", back: "Equation involving derivatives<br>of unknown function<br>Example: dy/dx = y" },
+            { grade: 12, category: "Calculus", front: "Order of DE", back: "Highest derivative present<br>Example: d²y/dx² → 2nd order" },
+            { grade: 12, category: "Calculus", front: "General Solution", back: "Contains arbitrary constants<br>Example: y = Ce^x + C₂" },
+            { grade: 12, category: "Calculus", front: "Particular Solution", back: "Satisfies initial conditions<br>Example: y(0)=1 gives specific C" },
+            { grade: 12, category: "Calculus", front: "Separable DE", back: "dy/dx = g(x)h(y)<br>Separate and integrate<br>Example: dy/y = dx" },
+            
+            // Limits - Advanced
+            { grade: 12, category: "Calculus", front: "lim(x→∞) (1 + 1/x)ˣ", back: "e<br>Example: Definition of e" },
+            { grade: 12, category: "Calculus", front: "Continuity at a", back: "lim(x→a) f(x) = f(a)<br>Example: Polynomials are continuous" },
+            { grade: 12, category: "Calculus", front: "Intermediate Value Theorem", back: "If f continuous on [a,b],<br>f takes all values between f(a) and f(b)<br>Example: Root existence" },
+            { grade: 12, category: "Calculus", front: "Fundamental Theorem of Calculus", back: "∫[a to b] f(x)dx = F(b) - F(a)<br>Example: Links derivatives and integrals" },
+            { grade: 12, category: "Vectors", front: "Dot Product", back: "a·b = |a||b|cos θ<br>= a₁b₁ + a₂b₂ + a₃b₃<br>Example: (1,2,3)·(4,5,6) = 32" },
+            { grade: 12, category: "Vectors", front: "Cross Product Magnitude", back: "|a×b| = |a||b|sin θ<br>Example: Area of parallelogram" },
+            { grade: 12, category: "Probability", front: "Permutation Formula", back: "P(n,r) = n!/(n-r)!<br>Example: P(5,3) = 60" },
+            { grade: 12, category: "Probability", front: "Combination Formula", back: "C(n,r) = n!/[r!(n-r)!]<br>Example: C(5,3) = 10" },
+            { grade: 12, category: "Probability", front: "Binomial Probability", back: "P(X=k) = C(n,k)p^k(1-p)^(n-k)<br>Example: Exactly 2 heads in 4 flips" },
+            { grade: 12, category: "Statistics", front: "Standard Deviation", back: "σ = √[Σ(x-μ)²/N]<br>Example: Measures spread of data" },
+
+            // Additional Important Formulas
+            { grade: 7, category: "Geometry", front: "Sum of Interior Angles (Polygon)", back: "Sum = (n-2) × 180°<br>n = number of sides<br>Example: Pentagon (n=5) → 540°" },
+            { grade: 8, category: "Geometry", front: "Each Interior Angle (Regular Polygon)", back: "Angle = (n-2) × 180° / n<br>Example: Regular hexagon → 120°" },
+            { grade: 9, category: "Algebra", front: "Sum of First n Natural Numbers", back: "Sum = n(n+1)/2<br>Example: 1+2+...+10 = 55" },
+            { grade: 9, category: "Algebra", front: "Sum of First n Odd Numbers", back: "Sum = n²<br>Example: 1+3+5+7 = 16 = 4²" },
+            { grade: 10, category: "Trigonometry", front: "Cosecant", back: "csc θ = 1/sin θ = Hyp/Opp<br>Example: csc 30° = 2" },
+            { grade: 10, category: "Trigonometry", front: "Secant", back: "sec θ = 1/cos θ = Hyp/Adj<br>Example: sec 60° = 2" },
+            { grade: 10, category: "Trigonometry", front: "Cotangent", back: "cot θ = 1/tan θ = Adj/Opp<br>Example: cot 45° = 1" },
+            { grade: 11, category: "Algebra", front: "Quadratic Sum of Roots", back: "α + β = -b/a<br>Example: x²-5x+6=0 → sum=5" },
+            { grade: 11, category: "Algebra", front: "Quadratic Product of Roots", back: "αβ = c/a<br>Example: x²-5x+6=0 → product=6" },
+            { grade: 6, category: "Number", front: "Order of Operations", back: "PEMDAS/BODMAS<br>Parentheses, Exponents,<br>Multiply/Divide, Add/Subtract<br>Example: 2+3×4 = 14" },
+            { grade: 7, category: "Number", front: "Profit Formula", back: "Profit = Selling Price - Cost Price<br>Example: SP=120, CP=100 → Profit=20" },
+            { grade: 7, category: "Number", front: "Profit Percentage", back: "Profit % = (Profit/CP) × 100<br>Example: 20/100 × 100 = 20%" },
+            { grade: 8, category: "Algebra", front: "Direct Variation", back: "y = kx (k is constant)<br>Example: y=2x, when x doubles, y doubles" },
+            { grade: 8, category: "Algebra", front: "Inverse Variation", back: "y = k/x (k is constant)<br>Example: y=12/x, when x=2, y=6" },
+            { grade: 9, category: "Geometry", front: "Heron's Formula (Triangle Area)", back: "A = √[s(s-a)(s-b)(s-c)]<br>s = (a+b+c)/2<br>Example: Triangle with sides 3,4,5" },
+            { grade: 10, category: "Geometry", front: "Area of Sector", back: "A = (θ/360°) × πr²<br>θ in degrees<br>Example: 90° sector of r=4 → πr²/4" },
+            { grade: 10, category: "Geometry", front: "Arc Length", back: "L = (θ/360°) × 2πr<br>θ in degrees<br>Example: 90° arc of r=4 → 2π" },
+            { grade: 11, category: "Trigonometry", front: "Sum Formula (Sine)", back: "sin(A+B) = sin A cos B + cos A sin B<br>Example: sin 75° = sin(45°+30°)" },
+            { grade: 11, category: "Trigonometry", front: "Sum Formula (Cosine)", back: "cos(A+B) = cos A cos B - sin A sin B<br>Example: cos 75° = cos(45°+30°)" },
+            { grade: 12, category: "Calculus", front: "L'Hôpital's Rule", back: "lim[f(x)/g(x)] = lim[f'(x)/g'(x)]<br>for 0/0 or ∞/∞ forms<br>Example: lim(x→0) sin x/x" },
+            { grade: 12, category: "Vectors", front: "Vector Magnitude", back: "|v| = √(x² + y² + z²)<br>Example: |(1,2,2)| = 3" },
+            { grade: 12, category: "Probability", front: "Expected Value", back: "E(X) = Σ[x·P(x)]<br>Example: Die roll → (1+2+3+4+5+6)/6" },
+        ];
+
+        let currentIndex = 0;
+        let filteredCards = [...flashcards];
+        let isFlipped = false;
+        let isGridView = false;
+
+        function updateCard() {
+            const card = filteredCards[currentIndex];
+            document.getElementById('frontContent').innerHTML = card.front;
+            document.getElementById('backContent').innerHTML = card.back;
+            document.getElementById('frontGrade').textContent = `Grade ${card.grade}`;
+            document.getElementById('backGrade').textContent = `Grade ${card.grade}`;
+            document.getElementById('frontCategory').textContent = card.category;
+            document.getElementById('backCategory').textContent = card.category;
+            document.getElementById('currentCard').textContent = currentIndex + 1;
+            document.getElementById('totalCards').textContent = filteredCards.length;
+            
+            const progress = ((currentIndex + 1) / filteredCards.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            if (isFlipped) {
+                flipCard();
+            }
+        }
+
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function nextCard() {
+            if (currentIndex < filteredCards.length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        }
+
+        function previousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        }
+
+        function filterByGrade(grade) {
+            if (grade === 'all') {
+                filteredCards = [...flashcards];
+            } else {
+                filteredCards = flashcards.filter(card => card.grade === parseInt(grade));
+            }
+            currentIndex = 0;
+            updateCard();
+            updateGridView();
+        }
+
+        function shuffleCards() {
+            for (let i = filteredCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+            }
+            currentIndex = 0;
+            updateCard();
+            updateGridView();
+        }
+
+        function resetProgress() {
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function toggleView() {
+            isGridView = !isGridView;
+            if (isGridView) {
+                document.getElementById('flashcardView').style.display = 'none';
+                document.getElementById('gridView').style.display = 'block';
+                updateGridView();
+            } else {
+                document.getElementById('flashcardView').style.display = 'block';
+                document.getElementById('gridView').style.display = 'none';
+            }
+        }
+
+        function updateGridView() {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            filteredCards.forEach((card, index) => {
+                const miniCard = document.createElement('div');
+                miniCard.className = 'mini-card';
+                miniCard.innerHTML = `
+                    <h3>${card.front}</h3>
+                    <p><strong>${card.back}</strong></p>
+                    <p style="margin-top: 10px; color: #ffd700;">Grade ${card.grade} • ${card.category}</p>
+                `;
+                miniCard.onclick = () => {
+                    currentIndex = index;
+                    toggleView();
+                    updateCard();
+                };
+                grid.appendChild(miniCard);
+            });
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm === '') {
+                const activeGrade = document.querySelector('.filter-btn.active').dataset.grade;
+                filterByGrade(activeGrade);
+            } else {
+                filteredCards = flashcards.filter(card => 
+                    card.front.toLowerCase().includes(searchTerm) ||
+                    card.back.toLowerCase().includes(searchTerm) ||
+                    card.category.toLowerCase().includes(searchTerm)
+                );
+                currentIndex = 0;
+                updateCard();
+                updateGridView();
+            }
+        });
+
+        // Grade filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                filterByGrade(this.dataset.grade);
+                document.getElementById('searchInput').value = '';
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (isGridView) return;
+            
+            if (e.key === 'ArrowRight' || e.key === 'n') {
+                nextCard();
+            } else if (e.key === 'ArrowLeft' || e.key === 'p') {
+                previousCard();
+            } else if (e.key === ' ' || e.key === 'f') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Initialize
+        updateCard();
+        document.getElementById('totalCards').textContent = flashcards.length;
+    </script>
+</body>
+</html>
